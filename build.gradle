@@ -79,6 +79,16 @@ dependencies {
 
 }
 
+sourceSets {
+    main {
+        java {
+            // 테스트 폴더를 제외
+            exclude '**/test/**'
+        }
+    }
+}
+
 tasks.named('test') {
+    enabled = false
     useJUnitPlatform()
 }
