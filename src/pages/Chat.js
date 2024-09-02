@@ -3,11 +3,13 @@ import '../styles/chat.css';
 import '../styles/bootstrap.min.css';
 import '../styles/style.css';
 
+// Base64 URL 디코딩 함수
 const base64UrlDecode = (base64Url) => {
     let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     return atob(base64);
 };
 
+// JWT 응답 디코딩 함수
 const decodeJwtResponse = (token) => {
     let base64Payload = token.split('.')[1];
     let payload = base64UrlDecode(base64Payload);
@@ -15,9 +17,10 @@ const decodeJwtResponse = (token) => {
     return JSON.parse(payload);
 };
 
+// 토큰에서 이메일 추출하는 함수
 const extractEmailFromToken = (token) => {
     try {
-        const decodedToken = decodeJwtResponse(token);
+        const decodedToken = decodeJwtResponse(token.replace('Bearer ', '')); // 'Bearer ' 제거
         return decodedToken.email || decodedToken.sub;
     } catch (error) {
         console.error('JWT 토큰 디코딩 중 오류 발생:', error);
@@ -80,9 +83,9 @@ const Chat = () => {
 
                     if (response.ok) {
                         const data = await response.json();
-                        localStorage.setItem('jwtToken', data.jwtToken);
+                        localStorage.setItem('jwtToken', 'Bearer ${data.jwtToken}');
                         localStorage.setItem('refreshToken', data.refreshToken);
-                        return data.jwtToken;
+                        return `Bearer ${data.jwtToken}`; // 'Bearer ' 포함
                     } else {
                         console.error('리프레시 토큰 요청 실패');
                         localStorage.removeItem('jwtToken');
@@ -93,7 +96,7 @@ const Chat = () => {
                 console.error('토큰 디코딩 중 오류 발생:', e);
             }
         }
-        return authToken;
+        return authToken; // 'Bearer '가 포함된 authToken 반환
     };
 
     // 메시지 전송 처리
@@ -212,7 +215,7 @@ const Chat = () => {
             const response = await fetch('http://localhost:5050/api/documents/upload', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${authToken}`,
+                    'Authorization': `Bearer ${authToken}`, // Bearer 형식으로 설정, // 'Bearer '가 포함된 토큰 사용
                 },
                 body: formData,
             });
@@ -267,7 +270,7 @@ const Chat = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': `Bearer ${authToken}`,
+                    'Authorization': authToken, // 'Bearer '가 포함된 토큰 사용
                 },
                 body: requestBody,
             });

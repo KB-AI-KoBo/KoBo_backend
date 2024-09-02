@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -11,7 +12,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private String secretKey = "your_secret_key"; // 비밀 키 설정
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     public String generateToken(String email) {
         return Jwts.builder()
@@ -22,29 +24,14 @@ public class JwtUtil {
                 .compact();
     }
 
-
     public String extractEmail(String token) {
-        if (token == null || !token.startsWith("Bearer ")) {
-            throw new RuntimeException("Invalid token format");
-        }
-
-        String jwtToken = token.substring(7); // "Bearer " 제거
-
-        try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(jwtToken)
-                    .getBody();
-            return claims.getSubject();
-        } catch (MalformedJwtException e) {
-            System.err.println("Malformed JWT token: " + e.getMessage());
-            throw new RuntimeException("Malformed JWT token");
-        } catch (Exception e) {
-            System.err.println("Unexpected error: " + e.getMessage());
-            throw new RuntimeException("Unexpected error: " + e.getMessage());
-        }
+        String jwtToken = validateAndExtractToken(token);
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(jwtToken)
+                .getBody();
+        return claims.getSubject();
     }
-
 
     public boolean validateToken(String token, String email) {
         final String tokenEmail = extractEmail(token);
@@ -52,16 +39,21 @@ public class JwtUtil {
     }
 
     public boolean isTokenExpired(String token) {
-        try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .parseClaimsJws(token)
-                    .getBody();
-            return claims.getExpiration().before(new Date());
-        } catch (MalformedJwtException e) {
-            // JWT 형식 오류
-            throw new RuntimeException("Malformed JWT token");
-        }
+        String jwtToken = validateAndExtractToken(token);
+        Claims claims = Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(jwtToken)
+                .getBody();
+        return claims.getExpiration().before(new Date());
     }
 
+    private String validateAndExtractToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new IllegalArgumentException("Token must not be null or empty");
+        }
+        if (!token.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid token format: must start with 'Bearer '");
+        }
+        return token.substring(7); // "Bearer " 제거
+    }
 }

@@ -26,7 +26,7 @@ public class AIClient {
         // HttpClient 생성
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI("http://localhost:5000/analysis/analyze"))
+                .uri(new URI("http://localhost:5000/api/questions/submit"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
                 .build();
