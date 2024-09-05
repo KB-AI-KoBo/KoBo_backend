@@ -72,7 +72,7 @@ public class UserService {
 
     @Transactional
     public boolean login(UserLoginDto userLoginDto) {
-        Optional<User> userOptional = userRepository.findByUsername(userLoginDto.getEmail());
+        Optional<User> userOptional = userRepository.findByUsername(userLoginDto.getUsername());
         return userOptional.isPresent() && passwordEncoder.matches(userLoginDto.getPassword(), userOptional.get().getPassword());
     }
 

@@ -17,7 +17,7 @@ public class Question {
     private Long questionId;
 
     @ManyToOne
-    @JoinColumn(name = "document_id", nullable = false)
+    @JoinColumn(name = "document_id", nullable = true)
     private Document documentId;
 
     @ManyToOne

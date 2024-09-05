@@ -30,15 +30,23 @@ public class QuestionService {
 
     @Transactional
     public Question submitQuestion(Long documentId, String username, String content) {
-        Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new RuntimeException("문서를 찾을 수 없습니다."));
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         Question question = new Question();
-        question.setDocumentId(document);
         question.setUser(user);
+        System.out.println("해당 사용자(user) : " + question.getUser().getUsername());
         question.setContent(content);
+        System.out.println("저장할 질문 내용(content) : " + question.getContent());
+
+
+        // documentId가 null이 아닐 경우에만 Document를 조회합니다.
+        if (documentId != null) {
+            Document document = documentRepository.findById(documentId)
+                    .orElseThrow(() -> new RuntimeException("문서를 찾을 수 없습니다."));
+            question.setDocumentId(document);
+            System.out.println("저장된 문서(documentID) : " + question.getDocumentId());
+        }
 
         return questionRepository.save(question);
     }

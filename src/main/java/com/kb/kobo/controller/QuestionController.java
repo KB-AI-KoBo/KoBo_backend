@@ -24,11 +24,14 @@ public class QuestionController {
     @PostMapping("/submit")
     public ResponseEntity<Question> submitQuestion(
             @AuthenticationPrincipal UserDetails user,
-            @RequestParam("documentId") Long documentId,
+            @RequestParam(value = "documentId", required = false) Long documentId,
             @RequestParam("content") String content) {
+
+        System.out.println("submitQuestion 호출됨");
 
         try {
             Question question = questionService.submitQuestion(documentId, user.getUsername(), content);
+            System.out.println("질문 제출 성공! 질문 : " + question.getContent());
             return new ResponseEntity<>(question, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

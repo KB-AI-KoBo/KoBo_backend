@@ -39,7 +39,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>>  login(@Valid @RequestBody UserLoginDto userLoginDto) {
         // 사용자 인증 처리
-        String token = jwtUtil.generateToken(userLoginDto.getEmail());
+        String token = jwtUtil.generateToken(userLoginDto.getUsername());
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
         return ResponseEntity.ok(response);

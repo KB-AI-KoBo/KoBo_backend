@@ -6,14 +6,14 @@ import '../styles/signup.css'; // 필요시 다른 스타일시트도 가져올 
 
 const Login = () => {
     const navigate = useNavigate();
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         const userData = {
-            email: email,
+            username: username,
             password: password,
         };
 
@@ -57,15 +57,15 @@ const Login = () => {
                             <form onSubmit={handleLogin}>
                                 <div className="form-floating mb-3">
                                     <input
-                                        type="email"
+                                        type="text"
                                         className="form-control"
                                         id="floatingInput"
-                                        placeholder="name@example.com"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="사용자 이름"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
                                         required
                                     />
-                                    <label htmlFor="floatingInput">이메일 주소</label>
+                                    <label htmlFor="floatingInput">사용자 이름</label>
                                 </div>
                                 <div className="form-floating mb-4">
                                     <input
@@ -81,7 +81,7 @@ const Login = () => {
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between mb-4">
                                     <div className="form-check">
-                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                                        <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
                                         <label className="form-check-label" htmlFor="exampleCheck1">아이디 기억하기</label>
                                     </div>
                                     <a href="/">비밀번호 찾기</a>

@@ -123,24 +123,22 @@ const Chat = () => {
 
             let analysisResponse = null;
             let questionId = null;
-            let uploadResult = null;
 
             // 유효한 토큰 확인 및 재발급
             const validToken = await checkAndRefreshToken();
 
             try {
+                let uploadResult = null;
+
                 if (attachedFile) {
                     // 파일이 첨부된 경우, 파일을 먼저 업로드
                     const uploadResult = await uploadFile(attachedFile, validToken);
-                    console.log('파일이 첨부된 경우 uploadResult ',uploadResult)
 
-                    if (uploadResult && uploadResult.documentId) {
+                    try {
                         // 파일 업로드 성공 시, 질문과 문서 ID를 포함하여 제출
                         questionId = await submitQuestion(messageText, validToken, uploadResult.documentId);
-                        console.log('파일 업로드 성공 후 questionId ', questionId)
-
-                    } else {
-                        throw new Error('파일 업로드에 실패했습니다.');
+                    } catch (error) {
+                        throw new Error('질문 제출에 실패했습니다.');
                     }
                 } else {
                     // 파일이 없는 경우, 질문만 제출
@@ -215,7 +213,7 @@ const Chat = () => {
             const response = await fetch('http://localhost:5050/api/documents/upload', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${authToken}`, // Bearer 형식으로 설정, // 'Bearer '가 포함된 토큰 사용
+                    'Authorization': `Bearer ${authToken}`,
                 },
                 body: formData,
             });
@@ -245,32 +243,23 @@ const Chat = () => {
     };
 
     // 질문 제출 함수
-    const submitQuestion = async (questionContent, authToken, documentId = null) => {
+    const submitQuestion = async (messageText, authToken, documentId = null) => {
         if (!authToken) {
             console.error('토큰이 없습니다.');
             return null;
         }
 
-        const email = extractEmailFromToken(authToken);
-        console.log('Extracted email from token:', email);
-
-        if (!email) {
-            console.error('이메일을 추출할 수 없습니다.');
-            return null;
-        }
-
         try {
             const requestBody = new URLSearchParams({
-                email: email,
-                content: questionContent,
                 documentId: documentId || '',
+                content: messageText
             }).toString();
 
             const response = await fetch('http://localhost:5050/api/questions/submit', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': authToken, // 'Bearer '가 포함된 토큰 사용
+                    'Authorization': `Bearer ${authToken}`,
                 },
                 body: requestBody,
             });
@@ -300,7 +289,7 @@ const Chat = () => {
 
             console.log('formData : ', questionContent, file);
 
-            const response = await fetch('http://localhost:5050/chat', {
+            const response = await fetch('http://localhost:5050/analysis/analyze', {
                 method: 'POST',
                 body: formData,
             });
