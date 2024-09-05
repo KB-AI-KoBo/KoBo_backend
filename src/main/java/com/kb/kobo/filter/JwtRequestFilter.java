@@ -41,18 +41,18 @@ public class JwtRequestFilter implements javax.servlet.Filter {
 
         final String authorizationHeader = httpRequest.getHeader("Authorization");
 
-        String email = null;
+        String username = null;
         String jwtToken = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwtToken = authorizationHeader.substring(7); // "Bearer " 제거
-            email = jwtUtil.extractEmail(jwtToken); // 이메일 추출
+            username = jwtUtil.extractUsername(jwtToken); // 사용자 이름 추출
         }
 
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username); // 사용자 이름으로 로드
 
-            if (jwtUtil.validateToken(jwtToken, email)) {
+            if (jwtUtil.validateToken(jwtToken, username)) {
                 UserEmailPasswordAuthenticationToken authenticationToken =
                         new UserEmailPasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 

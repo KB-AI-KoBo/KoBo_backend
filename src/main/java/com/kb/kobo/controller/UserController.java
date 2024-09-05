@@ -45,8 +45,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        // JWT에서 사용자 이메일을 추출
-        String username = jwtUtil.extractEmail(token);
+        // JWT에서 username을 추출
+        String username = jwtUtil.extractUsername(token);
 
         // 사용자 정보를 서비스에서 조회합니다.
         Optional<User> userOptional = userService.findByUsername(username);

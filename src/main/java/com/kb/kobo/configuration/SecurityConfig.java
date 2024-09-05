@@ -78,7 +78,9 @@ public class SecurityConfig {
                 .invalidateHttpSession(true) // 세션 무효화
                 .deleteCookies("JSESSIONID") // 쿠키 삭제
                 .and()
-                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
+                .formLogin()
+                .usernameParameter("email");
 
         return http.build();
     }

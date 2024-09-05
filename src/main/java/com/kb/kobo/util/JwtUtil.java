@@ -15,16 +15,18 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    public String generateToken(String email) {
+    // 토큰 생성 시 username을 사용
+    public String generateToken(String username) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간 유효
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
-    public String extractEmail(String token) {
+    // 토큰에서 username 추출
+    public String extractUsername(String token) {
         String jwtToken = validateAndExtractToken(token);
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)
@@ -33,11 +35,13 @@ public class JwtUtil {
         return claims.getSubject();
     }
 
-    public boolean validateToken(String token, String email) {
-        final String tokenEmail = extractEmail(token);
-        return (tokenEmail.equals(email) && !isTokenExpired(token));
+    // 토큰 검증
+    public boolean validateToken(String token, String username) {
+        final String tokenUsername = extractUsername(token);
+        return (tokenUsername.equals(username) && !isTokenExpired(token));
     }
 
+    // 토큰 만료 확인
     public boolean isTokenExpired(String token) {
         String jwtToken = validateAndExtractToken(token);
         Claims claims = Jwts.parser()
@@ -47,6 +51,7 @@ public class JwtUtil {
         return claims.getExpiration().before(new Date());
     }
 
+    // 토큰 유효성 검사 및 추출
     private String validateAndExtractToken(String token) {
         if (token == null || token.trim().isEmpty()) {
             throw new IllegalArgumentException("Token must not be null or empty");
