@@ -16,11 +16,11 @@ public class AnalysisResult {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "document_id", nullable = false)
+    @JoinColumn(name = "document_id", nullable = true)
     private Document document;
 
-    @Column(name = "question_content", nullable = false)
-    private String questionContent;
+    @Column(name = "content", nullable = false)
+    private String Content;
 
     @Column(name = "result", columnDefinition = "TEXT")
     private String result;

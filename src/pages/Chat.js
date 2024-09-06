@@ -278,20 +278,51 @@ const Chat = () => {
         return null;
     };
 
-    // 분석 요청 함수
-    const submitAnalysisRequest = async (questionContent, file) => {
+    // // 분석 요청 함수
+    // const submitAnalysisRequest = async (questionContent, file) => {
+    //     try {
+    //         const formData = new FormData();
+    //         formData.append('query', questionContent);
+    //         if (file) {
+    //             formData.append('file', file);
+    //         }
+    //
+    //         console.log('formData : ', questionContent, file);
+    //
+    //         const response = await fetch('http://localhost:5050/analysis/analyze', {
+    //             method: 'POST',
+    //             body: formData,
+    //         });
+    //
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             console.log('분석 결과를 성공적으로 받았습니다:', data);
+    //             return data;
+    //         } else {
+    //             console.error('분석 결과를 받는 데 실패했습니다:', response.statusText);
+    //         }
+    //     } catch (error) {
+    //         console.error('분석 결과를 받는 도중 오류가 발생했습니다:', error);
+    //     }
+    //     return null;
+    // };
+
+    // 분석 결과 요청 함수
+    const submitAnalysisRequest = async (questionContent, documentId) => {
         try {
-            const formData = new FormData();
-            formData.append('query', questionContent);
-            if (file) {
-                formData.append('file', file);
-            }
+            const requestBody = {
+                documentId: documentId,
+                content: questionContent
+            };
 
-            console.log('formData : ', questionContent, file);
+            console.log('요청 데이터:', requestBody);
 
-            const response = await fetch('http://localhost:5050/analysis/analyze', {
+            const response = await fetch('http://localhost:5050/api/questions/submit', { // 백엔드의 submitQuestion 엔드포인트로 요청
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
             });
 
             if (response.ok) {
@@ -306,7 +337,6 @@ const Chat = () => {
         }
         return null;
     };
-
 
 
     return (
