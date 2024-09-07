@@ -31,7 +31,7 @@ llm = ChatOpenAI(temperature=0.5, model='gpt-4', openai_api_key=openai_api_key)
 
 # @sleep_and_retry
 # @limits(calls=5, period=60)
-@app.route('http://localhost:8080')
+@app.route('http://localhost:8080/')
 def process_request():
     try:
         # 외부 API로부터 JSON 데이터 가져오기
