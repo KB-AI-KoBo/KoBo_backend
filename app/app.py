@@ -74,7 +74,7 @@ def process_request():
         analysis_result = {
             "documentId": documentId,
             "content": query,
-            "result": result
+            "result": answer
         }
 
         return jsonify(analysis_result), 200
