@@ -48,19 +48,32 @@ def agent(state):
 
 # 2. user's input retrieve node
 def input_retrieve(state: AgentState) -> Dict[str, List[Dict[str, Any]]]:
+    # 입력이 dict 타입이 아닌 경우 예외 처리
     if not isinstance(state, dict) and not hasattr(state, 'get'):
         raise TypeError(f"Expected state to be a dict or have a 'get' method, but got {type(state)}")  
-    vectorstore = state.get('pdf_db', FAISS)
+
+    # vectorstore 가져오기
+    vectorstore = state.get('pdf_db', None)
+
+    # vectorstore가 None인 경우 작업 스킵
+    if vectorstore is None:
+        print("vectorstore is None, skipping retrieval.")
+        return {"retrieved_docs": []}  # 빈 리스트 반환
+
+    # agent_response 가져오기
     agent_response = state.get('agent_response', '').lower()
-    retriever = vectorstore.as_retriever(k = 7)
+
+    # retriever 설정 및 문서 검색
+    retriever = vectorstore.as_retriever(k=7)
     docs = retriever.invoke(agent_response)
-    print("PDF retrieved ready")
-    return {"retrieved_docs": docs}
+    print("PDF retrieved and ready")
     
+    return {"retrieved_docs": docs}
+
 # 4. DB retrieve node
 def db_retrieve(state: AgentState) -> Dict[str, List[Dict[str, Any]]] :
     if not isinstance(state, dict) and not hasattr(state, 'get'):
-        raise TypeError(f"Expected state to be a dict or have a 'get' method, but got {type(state)}")  
+        raise TypeError(f"Expected state to be a dict or have a 'get' method, but got {type(state)}")
     supporting_db = state.get('supporting_db', FAISS)
     agent_response = state.get('agent_response', '').lower()
     retriever = supporting_db.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold":0.5}, k=8)
