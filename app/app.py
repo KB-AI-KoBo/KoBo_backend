@@ -73,7 +73,7 @@ def process_request():
         # 분석 결과를 클라이언트로 반환 (Java로)
         analysis_result = {
             "documentId": documentId,
-            "questionContent": query,
+            "content": query,
             "result": result
         }
 

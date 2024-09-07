@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import org.json.JSONObject;
 
 public class AIClient {
@@ -14,10 +15,14 @@ public class AIClient {
         json.put("content", content);
 
         // HttpClient 생성
-        HttpClient client = HttpClient.newHttpClient();
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofMinutes(30))
+                .build();
+
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI("http://localhost:8080/"))  // AI 서버의 분석 요청 URL
                 .header("Content-Type", "application/json")
+                .timeout(Duration.ofMinutes(30)) // 응답 대기 30분 타임아웃
                 .POST(HttpRequest.BodyPublishers.ofString(json.toString()))
                 .build();
 

@@ -61,7 +61,7 @@ public class QuestionController {
 
             // 5. AI 결과에서 documentId, questionContent, result 추출
             Long returnedDocumentId = analysisResultMap.get("documentId") != null ? Long.valueOf(analysisResultMap.get("documentId").toString()) : null;
-            String questionContent = analysisResultMap.get("questionContent").toString();
+            String questionContent = analysisResultMap.get("content").toString();
             String result = analysisResultMap.get("result").toString();
 
             // 6. documentId가 있는 경우 문서 확인 및 설정
