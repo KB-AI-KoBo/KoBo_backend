@@ -28,34 +28,29 @@ supporting_db = public_to_vector_db()
 # LLM 초기화
 llm = ChatOpenAI(temperature=0.5, model='gpt-4', openai_api_key=openai_api_key)
 
-
-# @sleep_and_retry
-# @limits(calls=5, period=60)
-@app.route('http://localhost:8080/')
+@app.route('/', methods=['POST'])
 def process_request():
     try:
-        # 외부 API로부터 JSON 데이터 가져오기
-        submit_response = requests.get(f'{BACKEND_URL}/api/questions/submit', timeout = 10)
-        submit_response.raise_for_status()  # HTTP 에러 발생 시 예외 발생
-        submit = submit_response.json()
+        # 클라이언트로부터 JSON 데이터 가져오기 (Java에서 전달됨)
+        data = request.get_json()
+        documentId = data.get('documentId')
+        query = data.get('content')
 
-        query = submit.get('content')
         if not query:
-            return jsonify({"error": "Invalid request: 'query' is required"}), 400
+            return jsonify({"error": "Invalid request: 'content' is required"}), 400
 
-        print("질문 받아오기 성공")
-        documentId = submit.get('documentId')
+        print(f"질문 받아오기 성공: {query}")
 
         pdf_path = None
         pdf_db = None
 
         # 사용자 문서가 있을 때
         if documentId:
-            document_response = requests.get(f'{BACKEND_URL}/api/documents/{documentId}', timeout = 10)
+            document_response = requests.get(f'{BACKEND_URL}/api/documents/{documentId}', timeout=10)
             document_response.raise_for_status()
             document = document_response.json()
             pdf_path = document.get('document')
-            print("사용자 문서 받아오기 성공")
+            print(f"사용자 문서 받아오기 성공: {pdf_path}")
 
             # PDF를 벡터 데이터베이스로 변환
             pdf_db = pdf_to_vector_db(pdf_path)
@@ -75,19 +70,14 @@ def process_request():
         extracted_data = ExtractLink(answer, llm)
         print(f"Extracted data: {extracted_data}")
 
-        # 결과를 Java 백엔드로 반환
+        # 분석 결과를 클라이언트로 반환 (Java로)
         analysis_result = {
             "documentId": documentId,
             "questionContent": query,
             "result": result
         }
-        response = requests.post(f'{BACKEND_URL}/analysis/result', json=analysis_result)
-        response.raise_for_status()
 
-        response = requests.post(f'{BACKEND_URL}/support-programs', json=extracted_data)
-        response.raise_for_status()
-
-        return jsonify({"status": "success"}), 200
+        return jsonify(analysis_result), 200
 
     except requests.RequestException as e:
         print(f"Error in API request: {e}")
@@ -97,15 +87,5 @@ def process_request():
         return jsonify({"error": "Internal server error", "details": str(e)}), 500
 
 
-def main():
-    with app.app_context():  # Flask 애플리케이션 컨텍스트 설정
-        while True:
-            try:
-                process_request()
-            except Exception as e:
-                print(f"Error in main loop: {e}")
-            time.sleep(10)  # 10초 간격으로 재시도
-
-
 if __name__ == "__main__":
-    main()
+    app.run(host='0.0.0.0', port=8080)
