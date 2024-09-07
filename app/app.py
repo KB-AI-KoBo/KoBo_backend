@@ -10,7 +10,9 @@ import time
 from flask_cors import CORS
 from ratelimit import limits, sleep_and_retry
 
-
+# Flask 앱 초기화
+app = Flask(__name__)
+CORS(app)
 
 # 환경 변수 로드
 load_dotenv()
@@ -24,14 +26,16 @@ BACKEND_URL = "http://localhost:5050"
 supporting_db = public_to_vector_db()
 
 # LLM 초기화
-llm = ChatOpenAI(temperature=0.5, model='gpt-4o', openai_api_key=openai_api_key)
+llm = ChatOpenAI(temperature=0.5, model='gpt-4', openai_api_key=openai_api_key)
 
-@sleep_and_retry
-@limits(calls=5, period=60)
+
+# @sleep_and_retry
+# @limits(calls=5, period=60)
+@app.route('http://localhost:8080')
 def process_request():
     try:
         # 외부 API로부터 JSON 데이터 가져오기
-        submit_response = requests.get(f'{BACKEND_URL}/api/questions/submit',timeout=10)
+        submit_response = requests.get(f'{BACKEND_URL}/api/questions/submit', timeout = 10)
         submit_response.raise_for_status()  # HTTP 에러 발생 시 예외 발생
         submit = submit_response.json()
 
@@ -47,7 +51,7 @@ def process_request():
 
         # 사용자 문서가 있을 때
         if documentId:
-            document_response = requests.get(f'{BACKEND_URL}/api/documents/{documentId}',timeout=10)
+            document_response = requests.get(f'{BACKEND_URL}/api/documents/{documentId}', timeout = 10)
             document_response.raise_for_status()
             document = document_response.json()
             pdf_path = document.get('document')
@@ -81,7 +85,6 @@ def process_request():
         response.raise_for_status()
 
         response = requests.post(f'{BACKEND_URL}/support-programs', json=extracted_data)
-        # 해당 코드에서 error 발생할 시, json = extracted_data에서 extracted_data로 변경 바람
         response.raise_for_status()
 
         return jsonify({"status": "success"}), 200
@@ -93,15 +96,16 @@ def process_request():
         print(f"Error processing request: {e}")
         return jsonify({"error": "Internal server error", "details": str(e)}), 500
 
-def main():
-    while True:
-        try:
-            process_request()
-            time.sleep(5)
-        except Exception as e:
-            print(f"Error in main loop: {e}")
 
-            time.sleep(10)
+def main():
+    with app.app_context():  # Flask 애플리케이션 컨텍스트 설정
+        while True:
+            try:
+                process_request()
+            except Exception as e:
+                print(f"Error in main loop: {e}")
+            time.sleep(10)  # 10초 간격으로 재시도
+
 
 if __name__ == "__main__":
     main()
