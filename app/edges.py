@@ -55,9 +55,7 @@ def grade_documents(state: AgentState) -> str:
     agent_response: {agent_response}
     agent_response is not answer to the question. Please be careful.
     If the generated text contains false information and toxic words, say no.
-    Also when the generated text can't answer properly to user's question, say no.
-    If human asks ai to draw graph but agent response doesn't contain "ready for graph", say no.
-    If the generted text contains enough information to answer human question, say yes.
+    If the generted text contains information to answer human question, say yes.
     Respond with only 'yes' or 'no' to indicate relevance.
     """)
 
