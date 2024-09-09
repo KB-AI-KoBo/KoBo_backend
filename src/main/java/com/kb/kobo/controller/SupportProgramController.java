@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/support-programs")
+@RequestMapping("/api/support-programs")
 public class SupportProgramController {
 
     private final SupportProgramService supportProgramService;
