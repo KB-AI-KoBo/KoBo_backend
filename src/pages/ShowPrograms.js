@@ -14,20 +14,23 @@ const ShowPrograms = () => {
     useEffect(() => {
         const fetchPrograms = async () => {
             try {
-                const response = await fetch('/api/programs', {
-                    headers: {
-                        'Accept': 'application/json'
+                const response = await fetch(
+                    `https://api.odcloud.kr/api/3034791/v1/uddi:80a74cfd-55d2-4dd3-81c7-d01567d0b3c4?page=1&perPage=100&serviceKey=dq0FiphIXegKyP%2F5zIDul95IvtalzdhixfdY7Hp9g4Onm%2FX9aCt378S5nVejoKY%2BGFEL5uvq75P1%2FlYuu%2Bf%2BLQ%3D%3D`,
+                    {
+                        headers: {
+                            'Accept': '*/*'
+                        }
                     }
-                });
+                );
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
-                setPrograms(data);
-                setTotalPages(Math.ceil(data.length / perPage)); // 전체 페이지 수 계산
-                setCurrentPagePrograms(data.slice(0, perPage)); // 첫 페이지의 데이터 설정
+                setPrograms(data.data);
+                setTotalPages(Math.ceil(data.data.length / perPage)); // 전체 페이지 수 계산
+                setCurrentPagePrograms(data.data.slice(0, perPage)); // 첫 페이지의 데이터 설정
             } catch (error) {
                 console.error('Failed to fetch programs:', error);
             }
