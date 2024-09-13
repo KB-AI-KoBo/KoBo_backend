@@ -26,18 +26,10 @@ public class SupportProgramController {
     public ResponseEntity<SupportProgram> createSupportProgram(
             @RequestParam String programName,
             @RequestParam String url){
-//            @RequestParam String description,
-//            @RequestParam String eligibilityCriteria,
-//            @RequestParam String applicationDeadline) {
 
-
-        // SupportProgram 객체 생성
         SupportProgram supportProgram = new SupportProgram();
         supportProgram.setProgramName(programName);
         supportProgram.setUrl(url);
-//        supportProgram.setDescription(description);
-//        supportProgram.setEligibilityCriteria(eligibilityCriteria);
-//        supportProgram.setApplicationDeadline(Date.valueOf(applicationDeadline)); // 날짜 형식 맞추기
 
         SupportProgram savedSupportProgram = supportProgramService.saveSupportProgram(supportProgram);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedSupportProgram);
@@ -60,9 +52,9 @@ public class SupportProgramController {
     public ResponseEntity<Void> deleteSupportProgram(@PathVariable Long id) {
         if (supportProgramService.findSupportProgramById(id).isPresent()) {
             supportProgramService.deleteSupportProgramById(id);
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+            return ResponseEntity.notFound().build();
         }
     }
 }
