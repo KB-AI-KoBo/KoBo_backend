@@ -10,6 +10,8 @@ const ShowPrograms = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [perPage, setPerPage] = useState(12); // 4x3 레이아웃을 위한 12개 표시
     const [pageGroup, setPageGroup] = useState(0); // 10단위 페이지 그룹 관리
+    const [분야, set분야] = useState('');  // 분야 필터링을 위한 상태 추가
+    const [신청기간, set신청기간] = useState(''); // 신청 기간 필터링을 위한 상태 추가
 
     useEffect(() => {
         const fetchPrograms = async () => {
@@ -43,9 +45,32 @@ const ShowPrograms = () => {
         // 페이지가 변경될 때마다 현재 페이지의 데이터를 설정
         const startIndex = (page - 1) * perPage;
         const endIndex = startIndex + perPage;
-        setCurrentPagePrograms(programs.slice(startIndex, endIndex));
+
+        // 현재 날짜를 기준으로 신청 기간 상태 구분
+        const today = new Date();
+
+        const filteredPrograms = programs.filter((program) => {
+            const startDate = new Date(program.신청시작일자);
+            const endDate = new Date(program.신청종료일자);
+
+            let 모집상태 = '';
+            if (endDate < today) {
+                모집상태 = '모집 완료';
+            } else if (startDate <= today && today <= endDate) {
+                모집상태 = '모집 중';
+            } else if (startDate > today) {
+                모집상태 = '모집 전';
+            }
+
+            return (
+                (분야 === '' || program.분야 === 분야) &&
+                (신청기간 === '' || 모집상태 === 신청기간)
+            );
+        });
+
+        setCurrentPagePrograms(filteredPrograms.slice(startIndex, endIndex));
         window.scrollTo(0, 0); // 페이지 변경 시 스크롤을 맨 위로 이동
-    }, [page, programs, perPage]);
+    }, [page, programs, perPage, 분야, 신청기간]);
 
     const handleNextPageGroup = () => {
         if ((pageGroup + 1) * 10 < totalPages) {
@@ -63,6 +88,24 @@ const ShowPrograms = () => {
 
     return (
         <div className="program-list-container">
+            <div className="filter-container">
+                <select value={분야} onChange={(e) => set분야(e.target.value)}>
+                    <option value="">분야 선택</option>
+                    <option value="경영">경영</option>
+                    <option value="수출">수출</option>
+                    <option value="인력">인력</option>
+                    <option value="기술">기술</option>
+                    <option value="내수">내수</option>
+                </select>
+
+                <select value={신청기간} onChange={(e) => set신청기간(e.target.value)}>
+                    <option value="">신청 기간 선택</option>
+                    <option value="모집 전">모집 전</option>
+                    <option value="모집 중">모집 중</option>
+                    <option value="모집 완료">모집 완료</option>
+                </select>
+            </div>
+
             <div className="program-list">
                 {currentPagePrograms.map((program, index) => (
                     <div key={index} className="program-card">

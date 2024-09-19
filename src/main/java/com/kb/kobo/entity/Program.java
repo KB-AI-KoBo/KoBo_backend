@@ -3,9 +3,20 @@ package com.kb.kobo.entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 @Getter
 @Setter
+@Entity
 public class Program {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본 키 자동 생성 전략
+    private Long id;
+
     private String 사업명;
     private String 분야;
     private String 신청시작일자;
