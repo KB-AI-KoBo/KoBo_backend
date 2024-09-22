@@ -96,6 +96,7 @@ const ShowPrograms = () => {
                     <option value="인력">인력</option>
                     <option value="기술">기술</option>
                     <option value="내수">내수</option>
+                    <option value="창업">창업</option>
                 </select>
 
                 <select value={신청기간} onChange={(e) => set신청기간(e.target.value)}>
