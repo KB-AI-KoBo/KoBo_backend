@@ -37,7 +37,7 @@ public class NotificationController {
         if (notification != null) {
             return ResponseEntity.ok(notification);
         } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -45,9 +45,9 @@ public class NotificationController {
     public ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
         if (notificationService.existsById(id)) {
             notificationService.deleteNotification(id);
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+            return ResponseEntity.notFound().build();
         }
     }
 
