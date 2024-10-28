@@ -1,4 +1,4 @@
-package com.kb.kobo.model;
+package com.kb.kobo.entity;
 
 public class Program {
     private String 사업명;
