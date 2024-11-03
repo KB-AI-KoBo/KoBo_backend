@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/showP.css';
-import '../styles/bootstrap.min.css';
 import '../styles/style.css';
 
 const ShowPrograms = () => {
