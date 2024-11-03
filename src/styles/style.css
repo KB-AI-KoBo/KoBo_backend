@@ -1,334 +1,317 @@
-/********** Template CSS **********/
-
-/*** 로컬 폰트 정의 ***/
-@font-face {
-    font-family: 'displayL';
-    src: url('../assets/fonts/KBFGDisplay-Light_1_.ttf') format('truetype');
-    font-weight: 400;
-}
-
-@font-face {
-    font-family: 'textL';
-    src: url('../assets/fonts/KBFGText-Light_1_.ttf') format('truetype');
-    font-weight: 400;
-}
-
-@font-face {
-    font-family: 'KBFGDisplay';
-    src: url('../assets/fonts/KBFGDisplay-Medium_1_.ttf') format('truetype');
-    font-weight: 500;
-    font-style: normal;
+.app {
+    width: 100%;
+    height: 100vh;
+    /* 뷰포트 높이로 설정 */
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 body {
-    background-color: #ffffff;
-    /* 배경색을 흰색으로 변경 */
-    font-family: 'textM', sans-serif;
-}
-
-
-:root {
-    --primary: #60584c;
-    --light: #faf7d9;
-    --dark: #60584c;
-}
-
-.back-to-top {
-    position: fixed;
-    display: none;
-    right: 45px;
-    bottom: 45px;
-    z-index: 99;
-}
-
-
-/*** Spinner ***/
-#spinner {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity .5s ease-out, visibility 0s linear .5s;
-    z-index: 99999;
-}
-
-#spinner.show {
-    transition: opacity .5s ease-out, visibility 0s linear 0s;
-    visibility: visible;
-    opacity: 1;
-}
-
-
-/*** Button ***/
-.btn {
-    transition: .5s;
-}
-
-.btn.btn-primary {
-    color: #FFFFFF;
-}
-
-.btn-square {
-    width: 38px;
-    height: 38px;
-}
-
-.btn-sm-square {
-    width: 32px;
-    height: 32px;
-}
-
-.btn-lg-square {
-    width: 48px;
-    height: 48px;
-}
-
-.btn-square,
-.btn-sm-square,
-.btn-lg-square {
+    margin: 0;
     padding: 0;
-    display: inline-flex;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
+
+.content-wrapper-container {
+    position: relative;
+    height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 10%;
+    overflow: hidden;
+    margin-top: 64px;
+
+}
+
+.content-wrapper {
+    display: flex;
+    height: calc(100vh - 64px);
+    background-color: #fefefe;
+    position: relative;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
+}
+
+/*header*/
+.header {
+    scale: 80%;
+    top: -1.25%;
+    left: -12.5%;
+    width: 125%;
+    height: 80px;
+    display: flex;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 1000;
+    background-color: #fefefe;
+    box-shadow: 0 2px 4px 0 #d9d9d9;
+    /* 다른 요소들 위에 표시되도록 z-index 설정 */
+    position: fixed;
+}
+
+
+.logo-icon {
+    position: absolute;
+    width: 60px;
+    height: 55px;
+    top: 12px;
+    left: 16.35%;
+    background: url(../assets/images/logo.svg) no-repeat center;
+    background-size: cover;
+}
+
+.coworker-container {
+    position: absolute;
+    top: 29px;
+    left: calc(16.35% + 60px);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 23px;
+    letter-spacing: -1.92px;
+}
+
+.coworker .co {
+    color: #3e703d;
+}
+
+.coworker .worker {
+    color: #64a446;
+}
+
+.login-button,
+.signin-button {
+    position: absolute;
+    width: 92px;
+    height: 50px;
+    top: 14.5px;
+    border-radius: 10px;
+    display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: normal;
-    border-radius: 50px;
+}
+
+.login-button {
+    right: calc(16.35% + 108px);
+    background: #3f3f3f;
+}
+
+.signin-button {
+    right: 16.35%;
+    background: #d9d9d9;
+}
+
+.button-text {
+    color: #fefefe;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
 }
 
 
-/*** Layout ***/
+/*sidebar*/
+
+.sidebar-container {
+    scale: 80%;
+    display: flex;
+    width: 320px;
+    height: calc(100vh - 80px);
+    transition: width 0.3s ease;
+    flex-shrink: 0;
+    margin-top: 16px;
+}
+
+.sidebar-container.collapsed {
+    width: 36px;
+}
+
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 250px;
-    height: 100vh;
+    width: 266px;
+    height: 100%;
+    background-color: var(--white);
     overflow-y: auto;
-    background: var(--light);
-    transition: 0.5s;
-    z-index: 999;
+    transition: width 0.3s ease;
 }
 
-.content {
-    margin-left: 250px;
-    min-height: 100vh;
-    background: #ffffff;
-    transition: 0.5s;
+.sidebar-container.collapsed .sidebar {
+    width: 0;
+    overflow: hidden;
 }
 
-@media (min-width: 992px) {
-    .sidebar {
-        margin-left: 0;
-    }
-
-    .sidebar.open {
-        margin-left: -250px;
-    }
-
-    .content {
-        width: calc(100% - 250px);
-    }
-
-    .content.open {
-        width: 100%;
-        margin-left: 0;
-    }
+.sidebar-profile {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px 12px;
 }
 
-@media (max-width: 991.98px) {
-    .sidebar {
-        margin-left: -250px;
-    }
-
-    .sidebar.open {
-        margin-left: 0;
-    }
-
-    .content {
-        width: 100%;
-        margin-left: 0;
-    }
+.profile-image {
+    width: 50px;
+    height: 50px;
+    background-image: url(../assets/images/profile.png);
+    background-size: cover;
+    border-radius: 50%;
 }
 
+.sidebar-helloArea {
+    margin-left: 16px;
+}
 
-/*** Navbar ***/
-
-.sidebar .navbar .navbar-nav .nav-link {
-    padding: 7px 20px;
-    color: var(--dark);
+.sidebar-hello {
+    color: var(--gray-6);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
     font-weight: 500;
-    border-left: 3px solid var(--light);
-    border-radius: 0 30px 30px 0;
-    outline: none;
+}
+
+.sidebar-content {
+    display: flex;
     flex-direction: column;
 }
 
-.sidebar .navbar .navbar-nav .nav-link.active {
-    color: var(--primary);
-    background: #ffcc00;
-    font-weight: 600;
-    border-color: var(--primary);
-}
-
-.sidebar .navbar .navbar-nav .nav-link:hover {
-    color: var(--primary);
-    background: #ffcc0065;
-    font-weight: 600;
-    border-color: var(--primary);
-}
-
-.sidebar .navbar .navbar-nav .nav-link i {
-    width: 40px;
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #faf7d9;
-    border-radius: 40px;
-}
-
-.sidebar .navbar .navbar-nav .nav-link:hover i,
-.sidebar .navbar .navbar-nav .nav-link.active i {
-    background: var(--light);
-}
-
-.sidebar .navbar .dropdown-toggle::after {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    border: none;
-    content: "\f107";
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    transition: .5s;
-}
-
-.sidebar .navbar .dropdown-toggle[aria-expanded=true]::after {
-    transform: rotate(-180deg);
-}
-
-.sidebar .navbar .dropdown-item {
-    padding-left: 40px;
-    border-radius: 0 30px 30px 0;
-    font-weight: 200;
-    color: #60584c;
-}
-
-.content .navbar .navbar-nav .nav-link {
-    margin-top: 10px;
-    padding: 12px 0;
-    color: #fff387;
-    outline: none;
-}
-
-.content .navbar .navbar-nav .nav-link:hover,
-.content .navbar .navbar-nav .nav-link.active {
-    background: #ffcc0065;
-    font-weight: 500;
-}
-
-.content .navbar .sidebar-toggler,
-.content .navbar .navbar-nav .nav-link i {
-    width: 40px;
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    background: #60584c;
-    border-radius: 40px;
-}
-
-.content .navbar .dropdown-toggle::after {
-    vertical-align: middle;
-    border: none;
-    content: "\f107";
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    transition: .5s;
-}
-
-.content .navbar .dropdown-toggle[aria-expanded=true]::after {
-    transform: rotate(-180deg);
-}
-
-@media (max-width: 575.98px) {
-    .content .navbar .navbar-nav .nav-link {
-        margin-left: 15px;
-    }
-}
-
-
-/*** Date Picker ***/
-.bootstrap-datetimepicker-widget.bottom {
-    top: auto !important;
-}
-
-.bootstrap-datetimepicker-widget .table * {
-    border-bottom-width: 0px;
-}
-
-.bootstrap-datetimepicker-widget .table th {
-    font-weight: 500;
-}
-
-.bootstrap-datetimepicker-widget.dropdown-menu {
-    padding: 10px;
-    border-radius: 2px;
-    background-color: #ffcc00;
-}
-
-.bootstrap-datetimepicker-widget table td.active,
-.bootstrap-datetimepicker-widget table td.active:hover {
-    background: var(--primary);
-}
-
-.bootstrap-datetimepicker-widget table td.today::before {
-    border-bottom-color: var(--primary);
-}
-
-
-/*** Testimonial ***/
-.progress .progress-bar {
-    width: 0px;
-    transition: 2s;
-}
-
-
-/*** Testimonial ***/
-.testimonial-carousel .owl-dots {
-    margin-top: 24px;
+.menu {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: var(--gray-6);
+    transition: background-color 0.3s;
+    border-left: 2.4px solid transparent;
+    border-radius: 0 30px 30px 0;
+}
+
+.menu:hover {
+    background-color: #F0F0F0;
+}
+
+.menu.active {
+    background-color: var(--green-2);
+    border-left-color: var(--gray-6);
+}
+
+.menu-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
     justify-content: center;
+    background-color: var(--white);
+    border-radius: 50%;
+    margin-right: 10px;
 }
 
-.testimonial-carousel .owl-dot {
+.menu-text {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.menu.active .menu-text {
+    font-weight: 700;
+}
+
+.menu-dropdown {
     position: relative;
-    display: inline-block;
-    margin: 0 5px;
-    width: 15px;
-    height: 15px;
-    border: 5px solid var(--primary);
-    border-radius: 15px;
-    transition: .5s;
 }
 
-.testimonial-carousel .owl-dot.active {
-    background: var(--dark);
-    border-color: var(--primary);
+.menu-dropdown .menu {
+    width: 100%;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
 }
 
-.sidebar-notice {
-    margin-top: -10px;
-    margin-bottom: .5rem;
-    color: #60584c;
+.dropdown-content {
+    display: none;
+    background-color: var(--white);
+    padding: 10px 0;
 }
 
-.divider {
-    height: 2px;
-    background-color: #60584c33;
-    margin: -10px 0 20px 24px;
+.menu-dropdown.open .dropdown-content {
+    display: block;
 }
 
-.main-content {
-    display: inline-flex;
+.dropdown-item {
+    display: block;
+    padding: 10px 20px 10px 70px;
+    text-decoration: none;
+    color: var(--gray-6);
+    transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+    background-color: #F0F0F0;
+}
+
+.hamburger-menu {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    background-color: var(--gray-6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    margin-top: 10px;
+}
+
+.hamburger-menu img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+/*maincontent*/
+.main-container {
+    flex: 1;
+    height: calc(100vh - 64px);
+    background-color: var(--green-1);
+    overflow-y: auto;
+    transition: margin-left 0.3s ease;
+}
+
+.content-wrapper.sidebar-collapsed .main-container {
+    margin-left: 0;
+}
+
+.main-container,
+.main-container * {
+    box-sizing: border-box;
+}
+
+.content-wrapper {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    position: relative;
+    /* 햄버거 메뉴의 기준점 */
+}
+
+.main-container {
+    flex: 1;
+
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.content-wrapper.sidebar-collapsed .main-container {
+    margin-left: 0;
+    width: 100%;
+    /* 햄버거 메뉴 너비만큼만 마진 남김 */
+}
+
+
+.content-wrapper.sidebar-collapsed .hamburger-menu {
+    left: 0;
+    /* 사이드바가 접혔을 때 왼쪽으로 이동 */
 }

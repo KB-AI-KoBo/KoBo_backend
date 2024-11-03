@@ -1,44 +1,56 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: calc(100vh - 64px);
+    position: relative;
+    background-color: #e8f3d6;
+    justify-content: flex-end;
+}
+
+/* 커스텀 스타일 */
 body {
-    background-color: #ffffff;
+    background-color: var(--white);
     justify-content: center;
     align-items: flex-end;
     height: 100vh;
     margin: 0;
     font-family: 'textM', sans-serif;
-}
-
-.container {
-    position: relative;
-    width: 100%;
-    max-width: 800px;
-    height: 100%;
-    background-color: #ffffff;
-    padding: 20px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--gray-6);
 }
 
 .messages-container {
-    width: 100%;
-    padding: 10px;
-    box-sizing: border-box;
-    overflow-y: auto;
-    margin-bottom: 60px;
     flex: 1;
+    min-height: calc(100%-80px);
+    padding: 20px;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    padding-bottom: 20px;
-    /* 하단 패딩을 줄여서 말풍선과 입력창 사이의 거리 줄이기 */
-    position: relative;
-    top: -80px;
-    /* 전체 컨테이너를 위로 이동 */
+
+
+}
+
+.input-area {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    background-color: #e8f3d6;
+    margin: 0 10%;
+    padding: 2% 0;
 }
 
 .message {
-    border-radius: 10px;
-    padding: 10px;
-    margin: 10px 0;
+    border-radius: 8px;
+    padding: 8px;
+    margin: 8px 0;
     max-width: 70%;
     word-wrap: break-word;
     color: #333;
@@ -47,68 +59,66 @@ body {
 }
 
 .user-message {
-    background-color: #faf7d9;
+    background-color: var(--green-4);
     align-self: flex-end;
-    margin-right: 30px;
+    margin-right: 10%;
     text-align: right;
 }
 
 .user-message::after {
     content: '';
     position: absolute;
-    top: 10px;
-    right: -10px;
+    top: 8px;
+    right: -8px;
     width: 0;
     height: 0;
-    border: 10px solid transparent;
-    border-left-color: #faf7d9;
+    border: 8px solid transparent;
+    border-left-color: var(--green-4);
     border-right: 0;
     border-bottom: 0;
-    margin-top: -5px;
+    margin-top: -4px;
 }
 
 .bot-message {
     background-color: #e0e0e0;
     align-self: flex-start;
-    margin-left: 20px;
+    margin-left: 10%;
     text-align: left;
 }
 
 .bot-message::after {
     content: '';
     position: absolute;
-    top: 10px;
-    left: -10px;
+    top: 8px;
+    left: -8px;
     width: 0;
     height: 0;
-    border: 10px solid transparent;
+    border: 8px solid transparent;
     border-right-color: #e0e0e0;
     border-left: 0;
     border-bottom: 0;
-    margin-top: -5px;
+    margin-top: -4px;
 }
 
 .chat-container {
-    background-color: #faf7d9;
-    border-radius: 40px;
+    background-color: var(--white);
+    border-radius: 32px;
     outline: none;
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: 8px;
     width: 100%;
-    max-width: 800px;
-    position: fixed;
-    bottom: 20px;
+    max-width: 640px;
+
+    position: relative;
+    bottom: 16px;
     overflow-y: auto;
 }
 
-.chat-container input[type="file"] {
-    display: none;
-}
 
 .attach-icon {
-    color: #60584c;
-    background-color: #faf7d9;
+    color: var(--grey-6);
+    background-color: var(--white);
     border: none;
     border-radius: 50%;
     width: 40px;
@@ -120,37 +130,34 @@ body {
     padding: 2px 0 0 14px;
 }
 
+.chat-input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    background-color: var(--white);
+}
+
 .chat-input {
     flex: 1;
-    background: #faf7d9;
-    outline: none;
-    border: none;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
     border-radius: 20px;
-    color: #60584c;
-    padding: 10px 8px;
-    margin: 0 10px;
-    resize: none;
-    overflow: hidden;
-    min-height: 40px;
-    max-height: 100px;
+    font-size: 12px;
+    background-color: var(--white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.send-button {
-    background-color: #ffcc00;
-    color: #60584c;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    padding-top: 4px;
-}
+
 
 .send-button:hover {
-    background-color: #ffcc0065;
+    background-color: #68a15e;
+}
+
+.send-icon {
+    width: 24px;
+    height: 24px;
+    color: white;
 }
 
 .file-link {
@@ -158,4 +165,140 @@ body {
     text-decoration: underline;
     display: inline-block;
     margin-top: 5px;
+}
+
+/* 파일 입력 숨기기 */
+input[type="file"] {
+    display: none;
+}
+
+/* Flaticon 아이콘 스타일 */
+.fi {
+    line-height: 1;
+    display: inline-block;
+    font-style: normal;
+}
+
+.chat-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    background-color: var(--white);
+}
+
+.input-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background-color: var(--white);
+    border-radius: 40px;
+    padding: 0 20px;
+    margin-right: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    overflow-y: auto;
+}
+
+
+.chat-container input[type="file"] {
+    display: none;
+}
+
+.attachment-button {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.attachment-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--grey-6);
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    font-size: 16px;
+    background: transparent;
+    outline: none;
+}
+
+.send-button {
+    width: 64px;
+    height: 40px;
+    border-radius: 40px;
+    background-color: #79b06e;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    flex-shrink: 0;
+}
+
+.send-button:hover {
+    background-color: #68a15e;
+}
+
+.send-icon {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 46px;
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+}
+
+
+
+.file-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.file-icon i {
+    font-size: 20px;
+    color: #666;
+}
+
+.text-input {
+    flex: 1;
+    border: none;
+    background: none;
+    height: 100%;
+    padding: 0 15px;
+    font-size: 16px;
+    color: #333;
+}
+
+.text-input::placeholder {
+    color: #3f3f3f;
+}
+
+.text-input:focus {
+    outline: none;
+}
+
+
+
+.send-button i {
+    color: var(--white);
+    font-size: 16px;
 }

@@ -1,0 +1,25 @@
+:root {
+    --black: rgba(1, 1, 1, 1);
+    --gray-1: rgba(224, 224, 224, 1);
+    --gray-2: rgba(217, 217, 217, 1);
+    --gray-3: rgba(177, 177, 177, 1);
+    --gray-4: rgba(143, 143, 143, 1);
+    --gray-5: rgba(112, 112, 112, 1);
+    --gray-6: rgba(64, 64, 64, 1);
+    --green-1: rgba(233, 245, 200, 1);
+    --green-2: rgba(212, 235, 148, 1);
+    --green-3: rgba(170, 208, 71, 1);
+    --green-4: rgba(137, 198, 77, 1);
+    --green-5: rgba(100, 164, 70, 1);
+    --green-6: rgba(62, 112, 61, 1);
+    --white: rgba(254, 254, 254, 1);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Font+Awesome+5+Free:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=KBFG+Text:wght@700&display=swap');
+
+body {
+    margin: 0;
+    line-height: normal;
+}

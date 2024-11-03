@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/bootstrap.min.css';
 import '../styles/style.css';
-import '../styles/signup.css'; // 필요시 다른 스타일시트도 가져올 수 있음
+import '../styles/signup.css';
+import '../styles/styleguide.css';
 
 const Login = () => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
         const userData = {
-            username: username,
+            email: email,
             password: password,
         };
 
@@ -30,7 +30,7 @@ const Login = () => {
 
                 const data = await response.json();
                 if (data.token) {
-                    localStorage.setItem('jwtToken', `Bearer ${data.token}`); // Bearer 붙여서 저장
+                    localStorage.setItem('jwtToken', data.token);
                     navigate("/"); // 로그인 성공 후 메인 페이지로 리다이렉트
                 } else {
                     alert("로그인 실패: JWT 토큰이 반환되지 않았습니다.");
@@ -57,15 +57,15 @@ const Login = () => {
                             <form onSubmit={handleLogin}>
                                 <div className="form-floating mb-3">
                                     <input
-                                        type="text"
+                                        type="email"
                                         className="form-control"
                                         id="floatingInput"
-                                        placeholder="사용자 이름"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
+                                        placeholder="name@example.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         required
                                     />
-                                    <label htmlFor="floatingInput">사용자 이름</label>
+                                    <label htmlFor="floatingInput">이메일 주소</label>
                                 </div>
                                 <div className="form-floating mb-4">
                                     <input
@@ -81,7 +81,7 @@ const Login = () => {
                                 </div>
                                 <div className="d-flex align-items-center justify-content-between mb-4">
                                     <div className="form-check">
-                                        <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
+                                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
                                         <label className="form-check-label" htmlFor="exampleCheck1">아이디 기억하기</label>
                                     </div>
                                     <a href="/">비밀번호 찾기</a>
