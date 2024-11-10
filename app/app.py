@@ -8,7 +8,6 @@ from build_vector_db import pdf_to_vector_db, public_to_vector_db
 from ExtractLink import ExtractLink
 from workflow import run_workflow, extract_final_response
 from flask_cors import CORS
-from ratelimit import limits, sleep_and_retry
 
 # Flask 앱 초기화
 app = Flask(__name__)
@@ -29,6 +28,8 @@ supporting_db = public_to_vector_db()
 llm = ChatOpenAI(temperature=0.5, model='gpt-4o', openai_api_key=openai_api_key)
 # agent_components 초기화
 agent_components = initialize_agent_components(llm)
+# 전역 변수라 오류 생길수도? -> 빌드 후 확인
+chat_history = []
 @app.route('/', methods=['POST'])
 def process_request():
     try:
@@ -59,14 +60,16 @@ def process_request():
         else:
             print("사용자 문서가 없는 질문입니다.")
 
-        # 워크플로우 실행
-        result = run_workflow(query, pdf_path, openai_api_key, pdf_db, supporting_db, llm)
-        print("Workflow executed")
 
+        # 워크플로우 실행
+        result = run_workflow(query, pdf_path, openai_api_key, pdf_db, supporting_db, llm, agent_components, chat_history)
+        print("Workflow executed")
         # 최종 응답 추출
         answer = extract_final_response(result)
         print(f"Extracted answer: {answer}")
-
+        # chat history for llm
+        chat_history.append(query)
+        chat_history.append(answer)
         # 데이터 추출
         extracted_data = ExtractLink(answer, llm)
         print(f"Extracted data: {extracted_data}")

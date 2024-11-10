@@ -5,27 +5,49 @@ from langchain_community.vectorstores import FAISS
 from typing import List, Dict
 from AgentState import AgentState
 from typing import List, Dict, Any
+import urllib.request
+from tools import extract_content
+from dotenv import load_dotenv
+import os
 
 # 1. agent node
 def agent(state):
 
-    llm = state['llm']
+    chat_history = state.get('chat_history', [])
     agent_components = state.get('agent_components', None)
     if not agent_components:
         raise ValueError("agent_components not found in state")
 
-    base_prompt = agent_components["base_prompt"]
+    base_chain = agent_components["base_chain"]
+    response = base_chain.invoke({"input":state['input'], "chat_history": chat_history})
+    
+    return {"agent_response": response.content}
 
-    # agent가 이용할 도구 정의
-    tools = [
-        Tool(name="input_retrieve", func=input_retrieve, description="Retrieve information from user-provided files"),
-        Tool(name="db_retrieve", func=db_retrieve, description="Retrieve information from the database"),
-    ]
-    # agent 정의
-    agent = OpenAIFunctionsAgent(llm=llm, prompt=base_prompt, tools=tools)
-    agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-    response = agent_executor.run(state['input'])
-    return {"agent_response": response}
+# 네이버 뉴스 검색 api를 이용한 뉴스 검색 후 관련된 기사 내용 반환
+def naver_retrieve(state: AgentState) -> Dict[str, List[Dict[str, Any]]]:
+    load_dotenv()
+    # API 키 가져오기
+    client_id = os.getenv("CLIENT_ID")
+    client_secret = os.getenv("CLIENT_SECRET")
+    print("enter the naver engine")
+
+    agent_response = state.get('agent_response', '')
+    words_for_searching = extract_content(agent_response)
+    print(words_for_searching)
+    encText = urllib.parse.quote(words_for_searching)
+
+    url = 'https://openapi.naver.com/v1/search/news?query='+ encText
+    request = urllib.request.Request(url)
+    request.add_header("X-Naver-Client-id",client_id)
+    request.add_header("X-Naver-Client-Secret", client_secret)
+    response = urllib.request.urlopen(request)
+    rescode = response.getcode()
+    if(rescode==200):
+        response_body = response.read()
+        search_response = response_body.decode('utf-8')
+        return {"naver_docs": search_response}
+    else:
+        print("Error Code:" + rescode)
 
 # 2. user's input retrieve node
 def input_retrieve(state: AgentState) -> Dict[str, List[Dict[str, Any]]]:
@@ -43,10 +65,10 @@ def input_retrieve(state: AgentState) -> Dict[str, List[Dict[str, Any]]]:
 
     # agent_response 가져오기
     agent_response = state.get('agent_response', '').lower()
-
+    words_for_searching = extract_content(agent_response)
     # retriever 설정 및 문서 검색
     retriever = vectorstore.as_retriever(k=7)
-    docs = retriever.invoke(agent_response)
+    docs = retriever.invoke(words_for_searching)
     print("PDF retrieved and ready")
     
     return {"retrieved_docs": docs}
@@ -57,9 +79,10 @@ def db_retrieve(state: AgentState) -> Dict[str, List[Dict[str, Any]]] :
         raise TypeError(f"Expected state to be a dict or have a 'get' method, but got {type(state)}")
     supporting_db = state.get('supporting_db', FAISS)
     agent_response = state.get('agent_response', '').lower()
+    words_for_searching = extract_content(agent_response)
     retriever = supporting_db.as_retriever(search_type="similarity_score_threshold", search_kwargs={"score_threshold":0.5}, k=8)
-    
-    docs = retriever.invoke(agent_response)
+
+    docs = retriever.invoke(words_for_searching)
     return {"db_docs": docs}
 
 # 5. combiner node
@@ -96,14 +119,23 @@ def rewrite(state):
 # 사용자를 위한 답변을 생성하는 agent node
 def generate(state):
     combined_result = state.get('combined_result', [])
-    combined_text = ' '.join(doc.page_content for doc in combined_result)
+    if combined_result is None :
+        combined_text = ''
+    else:
+        combined_text = ' '.join(doc.page_content for doc in combined_result)
+    
+    naver_docs = state.get('naver_docs','')
+    if naver_docs is None:
+        naver_text = ''
+    else:
+        naver_text = naver_docs
     agent_components = state.get('agent_components', None)
     if not agent_components:
         raise ValueError("agent_components not found in state")
     generate_chain = agent_components['generate_chain']
     
     generated_info = generate_chain.invoke({
-        "context": combined_text,
+        "context": combined_text + naver_text,
         "query": state.get('input'),
         "agent_response": state.get('agent_response', [])
     })

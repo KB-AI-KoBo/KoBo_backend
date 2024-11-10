@@ -1,58 +1,83 @@
 from langchain.prompts import ChatPromptTemplate, PromptTemplate
 from langchain.prompts import MessagesPlaceholder
+from datetime import datetime
 
 
 def initialize_agent_components(llm):
+    now = datetime.now()
+    current_time = now.strftime("%Y-%m-%d %H:%M:%S")
     # Prompt 템플릿을 한 번만 초기화
     base_prompt = ChatPromptTemplate.from_messages([
-        ("system", '''You are an AI assistant helping small business with financial information retrieval and generation. 
-         1. Please Answer in Korean. 
-         2. Make sure especially yourself generate right answer on the given information. 
-         3. You must not invoke fuction. No Invoking.
-         4. if you need to retrieve information, put the word 유저 파일 or 데이터베이스. In most cases, when user asks about his input file or his own company or business,you need to retrieve user file.
-         5. In other cases, for example user file isn't, you need to retrieve database.
-         6. Analyze user input and write description of the data that you need. 
-         7. Make your response easy to use search word for vector db. Just write words or sentences.'''),
-        ("human", "{input}"),
+        ("system", f'''You are an expert AI assistant specializing in providing financial information to small businesses. Your role is to accurately retrieve and generate information that meets the user's queries.
+        ### Instructions:
+        1. Always respond in Korean.
+        2. Ensure that your answers are correct and based on the given information.
+        3. Choose the appropriate method for information retrieval:
+        - **유저 파일**: Use this when the user inquires about their company or personal files.
+        - **데이터베이스**: Use this for questions regarding SME (Small and Medium Enterprises) support programs.
+        - **검색엔진**: Use this to obtain real-time information or data that is unlikely to be found in the first two methods.
+        4. Analyze user input and clearly describe the data you need to obtain.
+        5. For efficient searching, format your search content with [[ at the beginning and ]] at the end. Ensure to provide only one suitable keyword when utilizing the search engine, as it must be included.
+        6. Keep your responses concise and suitable for retrieval use, ensuring all communication is in Korean.
+        7. Current time: {current_time}'''),
+        ("human", '''지금까지의 채팅 내역입니다. 사용자가 이전 질문에 대해 추가적인 정보를 원할 때는 참고하세요. Chat History: {chat_history},
+                        현재 질문: {input}'''),
         ("ai", "I understand. I'll determine the best course of action."),
-        ("human", "Great, what do you think we should do next?"),
-        MessagesPlaceholder(variable_name="agent_scratchpad")
+        ("human", "Great, what do you think we should do next?")
     ])
     
     rewrite_prompt = ChatPromptTemplate.from_messages([
-        ("system", '''You are an AI assistant that rewrites question from the user for AI agent to make the answer more accurate and perfect.
-                      Write the subtle question based on given information.
-                      And please write description about data that agent needs to find.'''),
-        ("human", "Please rewrite the following information: {context}, question:{input}, AI answer:{answer}")
+        ("system", '''
+        You are an expert AI assistant specializing in enhancing user inquiries for AI agents to ensure responses are precisely tailored and highly accurate. 
+
+        ### Instructions: 
+        1. Rewrite the user's question using subtlety and clarity based on the provided context.
+        2. Create a descriptive analysis of the data the AI agent is required to gather in order to formulate its answer.
+
+        ### Context & Query: 
+        - Context: {context}
+        - Original Question: {input}
+        - AI Previously Provided Answer: {answer}
+        '''),
+        ("human", "Please provide the necessary context and data to improve the AI's response.")
     ])
     
     generate_prompt = ChatPromptTemplate.from_messages([
         ("system", '''You are an AI assistant that generates the answer based on given context. 
                       Please write in Korean. Answer logically and avoid writing false information'''),
         ("human", '''Using the following information, generate a comprehensive response on the question.
-                    구체적인 수치를 인용하며 서술해라. 지원 사업 데이터에 링크가 있다면 참조해줘.
+                    When you refer to news, please indicate source link.
+                    구체적인 수치를 인용하며 서술해라. 지원 사업 데이터에 링크가 있다면 정확히 참조해줘.
                     기록번호나 날짜는 제외해서 서술해도 돼.
                 information:{context}, question: {query}, agent_response : {agent_response}''')
     ])
 
     grade_prompt = PromptTemplate.from_template("""
-    You are evaluating AI answer to human question.
-    answer: {answer}
-    Question: {question}
-    agent_response: {agent_response}
-    agent_response is not answer to the question. Please be careful.
-    If the generated text contains false information and toxic words, say no.
-    If the generted text contains information to answer human question, say yes.
-    Respond with only 'yes' or 'no' to indicate relevance.
+        As an AI evaluation expert, your task is to assess the relevance of an AI-generated response to a human question.
+
+        ### Instructions:
+        1. Analyze the provided answer, question, and agent response.
+        2. Determine if the agent response adequately addresses the question.
+        3. Identify if the generated text contains false information or toxic language; if it does, respond with "no."
+        4. If the response contains relevant information to answer the human question, respond with "yes."
+        5. Respond with only "yes" or "no."
+
+        ### Context:
+        - Answer: {answer}
+        - Question: {question}
+        - Agent Response: {agent_response}
+
+        Your focus should be entirely on the relevance and accuracy of the agent's response to the given question. Please be thorough and precise in your evaluation.
     """)
 
     
     # LLM 바인딩을 미리 한 번만 실행
-    rewrite_chain = rewrite_prompt | llm.bind(temperature=0.5)
-    generate_chain = generate_prompt | llm.bind(temperature=0.7)
+    base_chain = base_prompt | llm.bind(temperature=0.4)
+    rewrite_chain = rewrite_prompt | llm.bind(temperature=0.3)
+    generate_chain = generate_prompt | llm.bind(temperature=0.6)
     grade_chain = grade_prompt | llm.bind(temperature = 0.3)
     return {
-        "base_prompt": base_prompt,
+        "base_chain": base_chain,
         "rewrite_chain": rewrite_chain,
         "generate_chain": generate_chain,
         "grade_chain": grade_chain

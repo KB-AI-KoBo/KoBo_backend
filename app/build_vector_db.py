@@ -2,11 +2,6 @@ import fitz
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from dotenv import load_dotenv
-from preprocessing_Json import process_json_to_documents
-import requests
-import certifi
-import os
 from langchain_community.document_loaders.csv_loader import CSVLoader
 
 # user가 업로드한 pdf 파일을 vector database에 업로드
@@ -27,7 +22,7 @@ def pdf_to_vector_db(pdf_path):
         # 텍스트 분할기 사용
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=1000,
-            chunk_overlap=200,
+            chunk_overlap=100,
             length_function=len,
             separators=["\n\n", "\n", " ", ""]
         )
