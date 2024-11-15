@@ -17,6 +17,10 @@ repositories {
     mavenCentral()
 }
 
+bootJar {
+    mainClass = 'com.kb.kobo.KoBoApplication'
+}
+
 dependencies {
     // Spring Boot Starter dependencies
     implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security Starter
