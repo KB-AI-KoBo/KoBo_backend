@@ -45,3 +45,6 @@ upload:
 server:
   port: 5050
 
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
