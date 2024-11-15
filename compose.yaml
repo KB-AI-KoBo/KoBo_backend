@@ -1,26 +1,47 @@
-# docker-compose.yml
-version: '3'
+version: '3.8'
 services:
-  backend:
+  ai:
     build:
-      context: ./
+      context: .
+      dockerfile: Dockerfile
+      target: flask
     ports:
-      - "5050:5000"
+      - "8080:8080"
     networks:
       - app-network
+    env_file:
+      - .env
     environment:
-      - FLASK_ENV=development  # 개발 모드 설정, 프로덕션에서는 False로 변경
-    command: flask run --host=0.0.0.0  # Flask 애플리케이션 실행 명령어
+      - FLASK_ENV=development
 
   frontend:
     build:
-      context: ./app/Frontend
+      context: .
+      dockerfile: Dockerfile
+      target: frontend
     ports:
       - "3000:3000"
     networks:
       - app-network
     depends_on:
-      - backend
+      - ai
+    environment:
+      - NODE_ENV=development
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: backend
+    ports:
+      - "5050:5050"
+    networks:
+      - app-network
+    env_file:
+      - .env
+    depends_on:
+      - ai
+
 networks:
   app-network:
     driver: bridge
