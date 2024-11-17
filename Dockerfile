@@ -17,9 +17,13 @@ CMD ["npm", "start"]
 
 # 백엔드 (Spring Boot)
 # JDK 설정
-FROM openjdk:17 AS backend
+FROM openjdk:17 AS backend_builder
+COPY . .
 
+RUN ./gradlew build -x test
+
+FROM openjdk:17 AS backend
 # JAR 파일 복사 및 실행 설정
-COPY /build/libs/*.jar app.jar
+COPY build/libs/*.jar app.jar
 EXPOSE 5050
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar","/app.jar"]

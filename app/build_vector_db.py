@@ -58,7 +58,7 @@ def pdf_to_vector_db(pdf_path):
     
 def public_to_vector_db():
 
-    loader = CSVLoader(file_path='app/test_data/중소기업지원사업목록_20240331.csv', encoding='cp949')
+    loader = CSVLoader(file_path='test_data/중소기업지원사업목록_20240331.csv', encoding='cp949')
     try:
         data = loader.load()
     except Exception as e:
