@@ -2,7 +2,7 @@ version: '3.8'
 services:
   ai:
     build:
-      context: .
+      context: ./app
       dockerfile: Dockerfile
       target: flask
     ports:
@@ -11,6 +11,8 @@ services:
       - app-network
     env_file:
       - .env
+    depends_on:
+      - backend
     environment:
       - FLASK_ENV=development
 
@@ -24,7 +26,7 @@ services:
     networks:
       - app-network
     depends_on:
-      - ai
+      - backend
     environment:
       - NODE_ENV=development
 
@@ -39,8 +41,6 @@ services:
       - app-network
     env_file:
       - .env
-    depends_on:
-      - ai
 
 networks:
   app-network:
