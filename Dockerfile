@@ -15,15 +15,24 @@ COPY . .
 EXPOSE 3000
 CMD ["npm", "start"]
 
+
+
 # 백엔드 (Spring Boot)
-# JDK 설정
-FROM openjdk:17 AS backend_builder
-COPY . .
+FROM openjdk:17-jdk AS backend
 
-RUN ./gradlew build -x test
+# 작업 디렉토리 설정
+WORKDIR /app
 
-FROM openjdk:17 AS backend
-# JAR 파일 복사 및 실행 설정
-COPY build/libs/*.jar app.jar
+# JAR 파일 복사
+COPY build/libs/KoBo_Proceed-0.0.1-SNAPSHOT.jar app.jar
+
+# 컨테이너 시작 시 실행할 명령어
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# 애플리케이션 포트 설정
 EXPOSE 5050
-ENTRYPOINT ["java","-jar","/app.jar"]
+
+RUN ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+
+
+
