@@ -1,6 +1,6 @@
 package com.kb.kobo.user.controller;
 
-import com.kb.kobo.user.dto.UserLoginDto;
+import com.kb.kobo.user.dto.UserLoginReqDto;
 import com.kb.kobo.user.service.UserService;
 import com.kb.kobo.user.security.JwtUtil;
 import jakarta.servlet.http.Cookie;
@@ -37,8 +37,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>>  login(@Valid @RequestBody UserLoginDto userLoginDto) {
-        String token = jwtUtil.generateToken(userLoginDto.getUsername());
+    public ResponseEntity<Map<String, String>>  login(@Valid @RequestBody UserLoginReqDto userLoginReqDto) {
+        String token = jwtUtil.generateToken(userLoginReqDto.getUsername());
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
         return ResponseEntity.ok(response);

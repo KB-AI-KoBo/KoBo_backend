@@ -1,7 +1,7 @@
 package com.kb.kobo.user.service;
 
-import com.kb.kobo.user.dto.UserDto;
-import com.kb.kobo.user.dto.UserLoginDto;
+import com.kb.kobo.user.dto.UserInfoDto;
+import com.kb.kobo.user.dto.UserLoginReqDto;
 import com.kb.kobo.user.domain.User;
 import com.kb.kobo.user.repository.UserRepository;
 import com.kb.kobo.user.security.JwtUtil;
@@ -32,18 +32,18 @@ public class UserService {
     }
 
     @Transactional
-    public User signUp(UserDto userDto) {
-        checkUserDuplication(userDto.getUsername(), userDto.getEmail());
-        User user = createUserFromDto(userDto);
+    public User signUp(UserInfoDto userInfoDto) {
+        checkUserDuplication(userInfoDto.getUsername(), userInfoDto.getEmail());
+        User user = createUserFromDto(userInfoDto);
         return userRepository.save(user);
     }
 
     @Transactional
-    public User updateUserProfile(Long id, UserDto updatedUserDto) {
+    public User updateUserProfile(Long id, UserInfoDto updatedUserInfoDto) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            updateUserFromDto(user, updatedUserDto);
+            updateUserFromDto(user, updatedUserInfoDto);
             return userRepository.save(user);
         } else {
             throw new RuntimeException("사용자를 찾을 수 없습니다: " + id);
@@ -71,9 +71,9 @@ public class UserService {
     }
 
     @Transactional
-    public boolean login(UserLoginDto userLoginDto) {
-        Optional<User> userOptional = userRepository.findByUsername(userLoginDto.getUsername());
-        return userOptional.isPresent() && passwordEncoder.matches(userLoginDto.getPassword(), userOptional.get().getPassword());
+    public boolean login(UserLoginReqDto userLoginReqDto) {
+        Optional<User> userOptional = userRepository.findByUsername(userLoginReqDto.getUsername());
+        return userOptional.isPresent() && passwordEncoder.matches(userLoginReqDto.getPassword(), userOptional.get().getPassword());
     }
 
     @Transactional
@@ -111,31 +111,31 @@ public class UserService {
         }
     }
 
-    private User createUserFromDto(UserDto userDto) {
-        String encodedPassword = encodePassword(userDto.getPassword());
+    private User createUserFromDto(UserInfoDto userInfoDto) {
+        String encodedPassword = encodePassword(userInfoDto.getPassword());
         return new User(
-                userDto.getUsername(),
+                userInfoDto.getUsername(),
                 encodedPassword,
-                userDto.getEmail(),
-                userDto.getCompanyName(),
-                userDto.getCompanySize(),
-                userDto.getRegistrationNumber(),
-                userDto.getCompanyEmail(),
-                userDto.getIndustry(),
+                userInfoDto.getEmail(),
+                userInfoDto.getCompanyName(),
+                userInfoDto.getCompanySize(),
+                userInfoDto.getRegistrationNumber(),
+                userInfoDto.getCompanyEmail(),
+                userInfoDto.getIndustry(),
                 LocalDateTime.now()
         );
     }
 
-    private void updateUserFromDto(User user, UserDto userDto) {
-        user.setEmail(userDto.getEmail());
-        user.setCompanyName(userDto.getCompanyName());
-        user.setCompanySize(userDto.getCompanySize());
-        user.setRegistrationNumber(userDto.getRegistrationNumber());
-        user.setCompanyEmail(userDto.getCompanyEmail());
-        user.setIndustry(userDto.getIndustry());
-        user.setUsername(userDto.getUsername());
-        if (userDto.getPassword() != null && !userDto.getPassword().isEmpty()) {
-            user.setPassword(encodePassword(userDto.getPassword()));
+    private void updateUserFromDto(User user, UserInfoDto userInfoDto) {
+        user.setEmail(userInfoDto.getEmail());
+        user.setCompanyName(userInfoDto.getCompanyName());
+        user.setCompanySize(userInfoDto.getCompanySize());
+        user.setRegistrationNumber(userInfoDto.getRegistrationNumber());
+        user.setCompanyEmail(userInfoDto.getCompanyEmail());
+        user.setIndustry(userInfoDto.getIndustry());
+        user.setUsername(userInfoDto.getUsername());
+        if (userInfoDto.getPassword() != null && !userInfoDto.getPassword().isEmpty()) {
+            user.setPassword(encodePassword(userInfoDto.getPassword()));
         }
     }
 

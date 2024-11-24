@@ -1,6 +1,6 @@
 package com.kb.kobo.user.controller;
 
-import com.kb.kobo.user.dto.UserDto;
+import com.kb.kobo.user.dto.UserInfoDto;
 import com.kb.kobo.user.domain.User;
 import com.kb.kobo.user.service.UserService;
 import com.kb.kobo.user.security.JwtUtil;
@@ -28,8 +28,8 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signup(@Valid @RequestBody UserDto userDto) {
-        User savedUser = userService.signUp(userDto);
+    public ResponseEntity<User> signup(@Valid @RequestBody UserInfoDto userInfoDto) {
+        User savedUser = userService.signUp(userInfoDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
@@ -66,11 +66,11 @@ public class UserController {
     }
 
     @PostMapping("/profile")
-    public ResponseEntity<User> updateUserProfile(@Valid @RequestBody UserDto updatedUserDto) {
+    public ResponseEntity<User> updateUserProfile(@Valid @RequestBody UserInfoDto updatedUserInfoDto) {
         // updatedUserDto에서 사용자의 식별자(ID)를 가져와서 사용
-        Long userId = updatedUserDto.getId(); // 예를 들어, getId() 메서드를 사용
+        Long userId = updatedUserInfoDto.getId(); // 예를 들어, getId() 메서드를 사용
 
-        User updatedUser = userService.updateUserProfile(userId, updatedUserDto);
+        User updatedUser = userService.updateUserProfile(userId, updatedUserInfoDto);
         return ResponseEntity.ok(updatedUser);
     }
 }
