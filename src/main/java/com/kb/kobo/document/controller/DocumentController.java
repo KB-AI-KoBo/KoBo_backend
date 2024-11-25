@@ -3,6 +3,7 @@ package com.kb.kobo.document.controller;
 import com.kb.kobo.document.domain.Document;
 import com.kb.kobo.user.domain.User;
 import com.kb.kobo.document.service.DocumentService;
+import com.kb.kobo.user.repository.UserRepository;
 import com.kb.kobo.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +29,13 @@ public class DocumentController {
 
     @Value("${upload.dir}")
     private String uploadDir;
-
+    private final UserRepository userRepository;
     private final DocumentService documentService;
-    private final UserService userService;
 
     @Autowired
-    public DocumentController(DocumentService documentService, UserService userService) {
+    public DocumentController(DocumentService documentService,UserRepository userRepository) {
         this.documentService = documentService;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/upload")
@@ -62,7 +62,7 @@ public class DocumentController {
     @GetMapping
     public ResponseEntity<List<Document>> listDocuments(@AuthenticationPrincipal UserDetails user) {
         String username = user.getUsername();
-        User currentUser = userService.findByUsername(username)
+        User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         List<Document> documents = documentService.findDocumentsByUser(currentUser);

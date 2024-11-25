@@ -3,6 +3,7 @@ package com.kb.kobo.document.service;
 import com.kb.kobo.document.domain.Document;
 import com.kb.kobo.user.domain.User;
 import com.kb.kobo.document.repository.DocumentRepository;
+import com.kb.kobo.user.repository.UserRepository;
 import com.kb.kobo.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,14 +24,13 @@ public class DocumentService {
 
     @Value("${upload.dir}")
     private String uploadDir;
-
     private final DocumentRepository documentRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public DocumentService(DocumentRepository documentRepository, UserService userService) {
+    public DocumentService(DocumentRepository documentRepository,UserRepository userRepository) {
         this.documentRepository = documentRepository;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -52,7 +52,7 @@ public class DocumentService {
             Files.copy(inputStream, filePath);
         }
 
-        User currentUser = userService.findByUsername(username)
+        User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         Document document = new Document();
