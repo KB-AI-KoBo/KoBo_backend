@@ -18,12 +18,12 @@ import java.io.IOException;
 public class JwtRequestFilter implements javax.servlet.Filter {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final JwtUtil jwtUtil;
+    private final TokenProvider tokenProvider;
 
     @Autowired
-    public JwtRequestFilter(CustomUserDetailsService customUserDetailsService, @Lazy JwtUtil jwtUtil) {
+    public JwtRequestFilter(CustomUserDetailsService customUserDetailsService, @Lazy TokenProvider tokenProvider) {
         this.customUserDetailsService = customUserDetailsService;
-        this.jwtUtil = jwtUtil;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -44,13 +44,13 @@ public class JwtRequestFilter implements javax.servlet.Filter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwtToken = authorizationHeader.substring(7); // "Bearer " 제거
-            username = jwtUtil.extractUsername(jwtToken); // 사용자 이름 추출
+            username = tokenProvider.extractUsername(jwtToken); // 사용자 이름 추출
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username); // 사용자 이름으로 로드
 
-            if (jwtUtil.validateToken(jwtToken, username)) {
+            if (tokenProvider.validateToken(jwtToken, username)) {
                 UserEmailPasswordAuthenticationToken authenticationToken =
                         new UserEmailPasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 

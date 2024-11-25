@@ -1,26 +1,42 @@
 package com.kb.kobo.user.security;
 
+import com.kb.kobo.user.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 
 @Component
-public class JwtUtil {
+public class TokenProvider {
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private static final String USERNAME_CLAIM = "Username ";
 
-    // 토큰 생성 시 username을 사용
-    public String generateToken(String username) {
+    private final Key key;
+    private final long accessTokenValidityTime;
+
+    public TokenProvider(@Value("${jwt.secret}") String secretKey,
+                         @Value("${jwt.access-token-validity-in-milliseconds}") long accessTokenValidityTime) {
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.accessTokenValidityTime = accessTokenValidityTime;
+    }
+
+    public String createAccessToken(User user) {
+        long nowTime = (new Date().getTime());
+
+        Date accessTokenExpiredTime = new Date(nowTime + accessTokenValidityTime);
+
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간 유효
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setSubject(user.getId().toString())
+                .claim(USERNAME_CLAIM, user.getUsername())
+                .setExpiration(accessTokenExpiredTime)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -28,7 +44,7 @@ public class JwtUtil {
     public String extractUsername(String token) {
         String jwtToken = validateAndExtractToken(token);
         Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey(key)
                 .parseClaimsJws(jwtToken)
                 .getBody();
         return claims.getSubject();
@@ -44,7 +60,7 @@ public class JwtUtil {
     public boolean isTokenExpired(String token) {
         String jwtToken = validateAndExtractToken(token);
         Claims claims = Jwts.parser()
-                .setSigningKey(secretKey)
+                .setSigningKey(key)
                 .parseClaimsJws(jwtToken)
                 .getBody();
         return claims.getExpiration().before(new Date());

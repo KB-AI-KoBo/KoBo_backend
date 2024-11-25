@@ -38,6 +38,7 @@ logging:
 
 jwt:
   secret: ${SECRET_KEY}
+  access-token-validity-in-milliseconds: ${ACCESS_TOKEN_VALIDITY_IN_MILLISECONDS}
 
 upload:
   dir: ${UPLOAD_DIR}

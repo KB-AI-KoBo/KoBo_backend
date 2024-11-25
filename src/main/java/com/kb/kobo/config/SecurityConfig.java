@@ -2,7 +2,7 @@ package com.kb.kobo.config;
 
 import com.kb.kobo.user.security.JwtRequestFilter;
 import com.kb.kobo.user.service.CustomUserDetailsService;
-import com.kb.kobo.user.security.JwtUtil;
+import com.kb.kobo.user.security.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -32,16 +32,16 @@ import java.io.IOException;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
-    private final JwtUtil jwtUtil;
+    private final TokenProvider tokenProvider;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService, @Lazy JwtUtil jwtUtil) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, @Lazy TokenProvider tokenProvider) {
         this.customUserDetailsService = customUserDetailsService;
-        this.jwtUtil = jwtUtil;
+        this.tokenProvider = tokenProvider;
     }
 
     @Bean
     public JwtRequestFilter jwtRequestFilter() {
-        return new JwtRequestFilter(customUserDetailsService, jwtUtil);
+        return new JwtRequestFilter(customUserDetailsService, tokenProvider);
     }
 
     @Bean
