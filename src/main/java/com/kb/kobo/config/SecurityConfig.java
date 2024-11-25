@@ -64,21 +64,21 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors().and()
-                .csrf().disable() // 전체 CSRF 보호 비활성화
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .antMatchers("/financial-analysis/upload/pdf").hasRole("USER")
                 .antMatchers("/financial-analysis/upload/chat").hasRole("USER")
                 .antMatchers("/api/documents/upload").authenticated()
-                .antMatchers("/", "/home", "/user/signup", "/auth/login").permitAll()
+                .antMatchers("/", "/home", "/api/user/signup", "/api/auth/login").permitAll()
                 .and()
                 .logout()
-                .logoutUrl("/auth/logout") // 로그아웃 URL 설정
-                .logoutSuccessUrl("/auth/login") // 로그아웃 성공 후 리다이렉트 URL 설정
-                .invalidateHttpSession(true) // 세션 무효화
-                .deleteCookies("JSESSIONID") // 쿠키 삭제
+                .logoutUrl("/auth/logout")
+                .logoutSuccessUrl("/auth/login")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
                 .and()
-                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -89,7 +89,7 @@ public class SecurityConfig {
             @Override
             public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
                     Authentication authentication) throws IOException, ServletException {
-                response.setStatus(HttpServletResponse.SC_OK); // Set status to 200 OK
+                response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().write("로그아웃 성공");
                 response.getWriter().flush();
             }

@@ -57,7 +57,7 @@ public class User {
     private LocalDateTime createdAt;
 
     @Builder
-    public User(Long id, String username, String password, String email, String companyName, String companySize, String registrationNumber, String industry) {
+    public User(Long id, String username, String password, String email, String companyName, String companySize, String registrationNumber, String companyEmail, String industry, LocalDateTime createdAt) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -65,7 +65,9 @@ public class User {
         this.companyName = companyName;
         this.companySize = companySize;
         this.registrationNumber = registrationNumber;
+        this.companyEmail = companyEmail;
         this.industry = industry;
+        this.createdAt = LocalDateTime.now();
     }
 
 }

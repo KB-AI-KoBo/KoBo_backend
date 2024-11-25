@@ -3,10 +3,10 @@ package com.kb.kobo.user.controller;
 import com.kb.kobo.user.dto.TokenDto;
 import com.kb.kobo.user.dto.UserLoginReqDto;
 import com.kb.kobo.user.service.AuthService;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -18,8 +18,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public TokenDto login (@RequestBody UserLoginReqDto userLoginReqDto) {
-        return authService.login(userLoginReqDto);
+    public ResponseEntity<TokenDto> login (@RequestBody UserLoginReqDto userLoginReqDto) {
+        TokenDto token = authService.login(userLoginReqDto);
+        return ResponseEntity.ok(token);
     }
 
 
