@@ -20,7 +20,7 @@ public class AuthService {
 
     @Transactional
     public TokenDto login (UserLoginReqDto userLoginReqDto) {
-        User user = userRepository.findByUsername(userLoginReqDto.getUsername())
+        User user = userRepository.findByEmail(userLoginReqDto.getEmail())
                 .orElseThrow(() -> new RuntimeException("회원가입하지 않은 사용자입니다."));
 
         if (!passwordEncoder.matches(userLoginReqDto.getPassword(), user.getPassword())) {
