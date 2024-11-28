@@ -66,34 +66,23 @@ public class SecurityConfig {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .antMatchers("/financial-analysis/upload/pdf").hasRole("USER")
-                .antMatchers("/financial-analysis/upload/chat").hasRole("USER")
-                .antMatchers("/api/documents/upload").authenticated()
-                .antMatchers("/", "/home", "/api/user/signup", "/api/auth/login").permitAll()
+                .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/login", "/api/user/signup").permitAll()
+                .antMatchers("/api/auth/logout", "/api/auth/delete").authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .logout()
-                .logoutUrl("/auth/logout")
-                .logoutSuccessUrl("/auth/login")
+                .logoutUrl("/api/auth/logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getWriter().write("로그아웃 성공");
+                    response.getWriter().flush();
+                })
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .and()
                 .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public LogoutSuccessHandler logoutSuccessHandler() {
-        return new SimpleUrlLogoutSuccessHandler() {
-            @Override
-            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
-                    Authentication authentication) throws IOException, ServletException {
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().write("로그아웃 성공");
-                response.getWriter().flush();
-            }
-        };
     }
 
     @Bean
