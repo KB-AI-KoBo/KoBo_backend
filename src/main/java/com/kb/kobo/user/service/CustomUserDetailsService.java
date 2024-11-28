@@ -12,16 +12,13 @@ import java.util.ArrayList;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-
     @Autowired
-    private UserRepository userRepository; // 사용자 정보를 조회하는 레포지토리
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // username 대신 email로 변경하여 조회
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이름을 가진 유저가 존재하지 않습니다. 이름: " + username));
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
     }
-
 }

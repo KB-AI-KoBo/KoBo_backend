@@ -7,7 +7,6 @@ import com.google.gson.annotations.SerializedName;
 @AllArgsConstructor
 @Data
 public class TokenDto {
-
     @SerializedName("access_token")
     String access_token;
 }

@@ -62,5 +62,4 @@ public class UserController {
         User user = userService.findByEmail(email);
         return ResponseEntity.ok(user);
     }
-
 }
