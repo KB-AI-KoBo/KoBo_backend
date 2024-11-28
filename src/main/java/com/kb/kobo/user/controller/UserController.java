@@ -45,13 +45,10 @@ public class UserController {
 
     }
 
-    @PostMapping("/update")
+    @PostMapping("/profile")
     public ResponseEntity<UserInfoDto> updateUser(Principal principal, @RequestBody UpdatedUserDto updatedUserDto) {
         UserInfoDto updatedUserInfo = userService.updateUser(principal, updatedUserDto);
         return ResponseEntity.ok(updatedUserInfo);
     }
-
-
-
 
 }
