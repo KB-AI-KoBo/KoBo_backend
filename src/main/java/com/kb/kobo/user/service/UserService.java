@@ -87,5 +87,10 @@ public class UserService {
         return UserInfoDto.from(user);
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
+    }
+
 
 }

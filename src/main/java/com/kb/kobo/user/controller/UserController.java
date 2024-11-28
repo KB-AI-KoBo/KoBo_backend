@@ -51,4 +51,10 @@ public class UserController {
         return ResponseEntity.ok(updatedUserInfo);
     }
 
+    @GetMapping("/profile/username/{username}")
+    public ResponseEntity<User> findByUsername(@PathVariable String username) {
+        User user = userService.findByUsername(username);
+        return ResponseEntity.ok(user);
+    }
+
 }
