@@ -27,11 +27,6 @@ public class JwtRequestFilter implements javax.servlet.Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        // 필터 초기화 코드 (필요시 구현)
-    }
-
-    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -43,12 +38,12 @@ public class JwtRequestFilter implements javax.servlet.Filter {
         String jwtToken = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwtToken = authorizationHeader.substring(7); // "Bearer " 제거
-            username = tokenProvider.extractUsername(jwtToken); // 사용자 이름 추출
+            jwtToken = authorizationHeader.substring(7);
+            username = tokenProvider.extractUsername(jwtToken);
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username); // 사용자 이름으로 로드
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 
             if (tokenProvider.validateToken(jwtToken, username)) {
                 UserEmailPasswordAuthenticationToken authenticationToken =
@@ -58,11 +53,7 @@ public class JwtRequestFilter implements javax.servlet.Filter {
             }
         }
 
-        chain.doFilter(request, response); // 다음 필터 체인으로 요청 전달
+        chain.doFilter(request, response);
     }
 
-    @Override
-    public void destroy() {
-        // 필터 종료 코드 (필요시 구현)
-    }
 }

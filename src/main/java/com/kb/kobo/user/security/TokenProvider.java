@@ -15,7 +15,7 @@ import java.util.Date;
 @Component
 public class TokenProvider {
 
-    private static final String USERNAME_CLAIM = "Username ";
+    private static final String USERNAME_CLAIM = "Username";
 
     private final Key key;
     private final long accessTokenValidityTime;
@@ -29,7 +29,6 @@ public class TokenProvider {
 
     public String createAccessToken(User user) {
         long nowTime = (new Date().getTime());
-
         Date accessTokenExpiredTime = new Date(nowTime + accessTokenValidityTime);
 
         return Jwts.builder()
@@ -40,40 +39,32 @@ public class TokenProvider {
                 .compact();
     }
 
-    // 토큰에서 username 추출
     public String extractUsername(String token) {
-        String jwtToken = validateAndExtractToken(token);
-        Claims claims = Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(jwtToken)
-                .getBody();
-        return claims.getSubject();
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.get(USERNAME_CLAIM, String.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
     }
 
-    // 토큰 검증
-    public boolean validateToken(String token, String username) {
-        final String tokenUsername = extractUsername(token);
-        return (tokenUsername.equals(username) && !isTokenExpired(token));
-    }
-
-    // 토큰 만료 확인
     public boolean isTokenExpired(String token) {
-        String jwtToken = validateAndExtractToken(token);
-        Claims claims = Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(jwtToken)
-                .getBody();
-        return claims.getExpiration().before(new Date());
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getExpiration().before(new Date());
+        } catch (Exception e) {
+            return true;
+        }
     }
 
-    // 토큰 유효성 검사 및 추출
-    private String validateAndExtractToken(String token) {
-        if (token == null || token.trim().isEmpty()) {
-            throw new IllegalArgumentException("Token must not be null or empty");
-        }
-        if (!token.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Invalid token format: must start with 'Bearer '");
-        }
-        return token.substring(7); // "Bearer " 제거
+    public boolean validateToken(String token, String username) {
+        String tokenUsername = extractUsername(token);
+        return (tokenUsername.equals(username) && !isTokenExpired(token));
     }
 }

@@ -1,6 +1,7 @@
 package com.kb.kobo.user.controller;
 
 import com.kb.kobo.user.domain.User;
+import com.kb.kobo.user.dto.UpdatedUserDto;
 import com.kb.kobo.user.dto.UserInfoDto;
 import com.kb.kobo.user.dto.UserSignupReqDto;
 import com.kb.kobo.user.repository.UserRepository;
@@ -43,6 +44,13 @@ public class UserController {
         return ResponseEntity.ok(user);
 
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<UserInfoDto> updateUser(Principal principal, @RequestBody UpdatedUserDto updatedUserDto) {
+        UserInfoDto updatedUserInfo = userService.updateUser(principal, updatedUserDto);
+        return ResponseEntity.ok(updatedUserInfo);
+    }
+
 
 
 
