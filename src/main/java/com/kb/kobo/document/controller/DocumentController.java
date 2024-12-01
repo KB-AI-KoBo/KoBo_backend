@@ -1,21 +1,19 @@
 package com.kb.kobo.document.controller;
 
 import com.kb.kobo.document.domain.Document;
+import com.kb.kobo.document.repository.DocumentRepository;
 import com.kb.kobo.user.domain.User;
 import com.kb.kobo.document.service.DocumentService;
 import com.kb.kobo.user.repository.UserRepository;
-import com.kb.kobo.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -26,16 +24,15 @@ import java.util.Optional;
 public class DocumentController {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentController.class);
-
-    @Value("${upload.dir}")
-    private String uploadDir;
+    private final DocumentRepository documentRepository;
     private final UserRepository userRepository;
     private final DocumentService documentService;
 
     @Autowired
-    public DocumentController(DocumentService documentService,UserRepository userRepository) {
+    public DocumentController(DocumentService documentService, UserRepository userRepository, DocumentRepository documentRepository) {
         this.documentService = documentService;
         this.userRepository = userRepository;
+        this.documentRepository = documentRepository;
     }
 
     @PostMapping("/upload")
@@ -58,26 +55,26 @@ public class DocumentController {
         }
     }
 
-
     @GetMapping
     public ResponseEntity<List<Document>> listDocuments(@AuthenticationPrincipal UserDetails user) {
         String username = user.getUsername();
         User currentUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        Long userId = currentUser.getId();
 
-        List<Document> documents = documentService.findDocumentsByUser(currentUser);
+        List<Document> documents = documentRepository.findByUserId(userId);
         return new ResponseEntity<>(documents, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Document> getDocument(@PathVariable("id") Long id) {
-        Optional<Document> document = documentService.findDocumentById(id);
+    public ResponseEntity<Document> getDocument(@PathVariable Long id) {
+        Optional<Document> document = documentRepository.findByDocumentId(id);
         return document.map(ResponseEntity::ok)
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteDocument(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteDocument(@PathVariable Long id) {
         try {
             documentService.deleteDocument(id);
             return new ResponseEntity<>("문서 삭제를 성공하였습니다.", HttpStatus.OK);

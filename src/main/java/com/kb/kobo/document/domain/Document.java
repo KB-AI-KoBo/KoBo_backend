@@ -1,43 +1,38 @@
 package com.kb.kobo.document.domain;
 
 import com.kb.kobo.user.domain.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "Documents")
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
 public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "document_id")
     private Long documentId;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(nullable = false)
     private User user;
 
-    @Column(name = "file_name", nullable = false, length = 255)
-    private String fileName;
+    @Column(nullable = false, length = 255)
+    private String documentName;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "file_type", nullable = false)
-    private FileType fileType;
+    @Column(nullable = false)
+    private FileType documentType;
 
-    @Column(name = "file_path", nullable = false, length = 255)
-    private String filePath;
+    @Column(nullable = false, length = 255)
+    private String documentPath;
 
-    @Column(name = "uploaded_at", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp uploadedAt;
-
-
 
     public enum FileType {
         PDF

@@ -4,19 +4,15 @@ import com.kb.kobo.document.domain.Document;
 import com.kb.kobo.user.domain.User;
 import com.kb.kobo.document.repository.DocumentRepository;
 import com.kb.kobo.user.repository.UserRepository;
-import com.kb.kobo.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -36,8 +32,9 @@ public class DocumentService {
     @Transactional
     public Document uploadAndSaveDocument(MultipartFile file, String username) throws IOException {
         Path uploadPath = Paths.get(uploadDir);
+
         if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+            throw new RuntimeException("파일 저장 경로가 존재하지 않습니다.");
         }
 
         String originalFilename = file.getOriginalFilename();
@@ -52,41 +49,25 @@ public class DocumentService {
             Files.copy(inputStream, filePath);
         }
 
-        User currentUser = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         Document document = new Document();
-        document.setUser(currentUser);
-        document.setFileName(originalFilename);
-        document.setFileType(Document.FileType.PDF);
-        document.setFilePath(uniqueFileName);
+        document.setUser(user);
+        document.setDocumentName(originalFilename);
+        document.setDocumentType(Document.FileType.PDF);
+        document.setDocumentPath(uniqueFileName);
 
         return documentRepository.save(document);
-    }
-
-
-    public Document saveDocument(Document document) {
-        return documentRepository.save(document);
-    }
-
-    public Optional<Document> findDocumentById(Long id) {
-        return documentRepository.findById(id);
-    }
-
-    public List<Document> findDocumentsByUser(User user) {
-        return documentRepository.findByUser(user);
     }
 
     @Transactional
     public void deleteDocument(Long documentId) {
         Document document = documentRepository.findById(documentId)
-                .orElseThrow(() -> new RuntimeException("문서를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("해당 문서를 찾을 수 없습니다."));
 
-        if (uploadDir == null || uploadDir.isEmpty()) {
-            throw new RuntimeException("업로드 디렉토리가 설정되지 않았습니다.");
-        }
+        Path filePath = Paths.get(uploadDir).resolve(document.getDocumentPath());
 
-        Path filePath = Paths.get(uploadDir).resolve(document.getFilePath());
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
