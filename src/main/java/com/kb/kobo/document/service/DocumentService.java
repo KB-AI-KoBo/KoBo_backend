@@ -1,6 +1,7 @@
 package com.kb.kobo.document.service;
 
 import com.kb.kobo.document.domain.Document;
+import com.kb.kobo.document.domain.FileType;
 import com.kb.kobo.user.domain.User;
 import com.kb.kobo.document.repository.DocumentRepository;
 import com.kb.kobo.user.repository.UserRepository;
@@ -38,11 +39,13 @@ public class DocumentService {
         }
 
         String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".pdf")) {
-            throw new RuntimeException("파일 형식이 올바르지 않습니다. PDF 파일만 업로드할 수 있습니다.");
+        if (originalFilename == null || originalFilename.isEmpty()) {
+            throw new RuntimeException("파일의 이름이 유효하지 않습니다.");
         }
 
-        String uniqueFileName = UUID.randomUUID() + ".pdf";
+        FileType fileType = determineFileType(originalFilename);
+
+        String uniqueFileName = UUID.randomUUID() + originalFilename.substring(originalFilename.lastIndexOf("."));
         Path filePath = uploadPath.resolve(uniqueFileName);
 
         try (var inputStream = file.getInputStream()) {
@@ -55,10 +58,25 @@ public class DocumentService {
         Document document = new Document();
         document.setUser(user);
         document.setDocumentName(originalFilename);
-        document.setDocumentType(Document.FileType.PDF);
+        document.setDocumentType(fileType);
         document.setDocumentPath(uniqueFileName);
 
         return documentRepository.save(document);
+    }
+
+    private FileType determineFileType(String filename) {
+        String lowerCaseFilename = filename.toLowerCase();
+        if (lowerCaseFilename.endsWith(".pdf")) {
+            return FileType.PDF;
+        } else if (lowerCaseFilename.endsWith(".pptx")) {
+            return FileType.PPT;
+        } else if (lowerCaseFilename.endsWith(".xlsx")) {
+            return FileType.EXCEL;
+        } else if (lowerCaseFilename.endsWith(".docx")) {
+            return FileType.WORD;
+        } else {
+            throw new RuntimeException("지원하지 않는 파일 형식입니다. PDF, PPT, EXCEL, WORD 파일만 업로드할 수 있습니다.");
+        }
     }
 
     @Transactional
