@@ -20,21 +20,18 @@ public class Document {
     @JoinColumn(nullable = false)
     private User user;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String documentName;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FileType documentType;
 
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String documentPath;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp uploadedAt;
 
-    public enum FileType {
-        PDF
-    }
 }
