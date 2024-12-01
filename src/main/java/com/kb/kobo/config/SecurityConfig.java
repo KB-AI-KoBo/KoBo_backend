@@ -66,7 +66,7 @@ public class SecurityConfig {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/login", "/api/user/signup").permitAll()
+                .antMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api/auth/login", "/api/user/signup", "/api/findPassword/**").permitAll()
                 .antMatchers("/api/auth/logout", "/api/auth/delete").authenticated()
                 .anyRequest().authenticated()
                 .and()
