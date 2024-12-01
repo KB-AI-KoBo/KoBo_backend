@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 public class MailService {
 
     private final JavaMailSender mailSender;
-    private static final String title = "임시 비밀번호 안내 이메일입니다.";
-    private static final String message = "안녕하세요. 임시 비밀번호 안내 메일입니다. "
+    private static final String title = "[CO_Worker] 임시 비밀번호 안내 이메일입니다.";
+    private static final String message = "안녕하세요. [CO_Worker] 임시 비밀번호 안내 메일입니다. "
             + "\n" + "회원님의 임시 비밀번호는 아래와 같습니다. 로그인 후 반드시 비밀번호를 변경해주세요." + "\n";
 
     @Value("${spring.mail.username}")
