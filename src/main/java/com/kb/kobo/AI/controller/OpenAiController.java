@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.kb.kobo.AI.service.OpenAiService;
-import com.kb.kobo.program.domain.Program;
+import com.kb.kobo.program.domain.SupportProgram;
 import java.util.List;
 
 
@@ -22,9 +22,9 @@ public class OpenAiController {
     }
 
     @GetMapping("/programs")
-    public ResponseEntity<List<Program>> getPrograms() {
-        String input = "Provide data for programs.";
-        List<Program> programs = openAiService.callOpenAiApi(input);
-        return ResponseEntity.ok(programs);
+    public ResponseEntity<List<SupportProgram>> getPrograms() {
+        String input = "Provide data for supportPrograms.";
+        List<SupportProgram> supportPrograms = openAiService.callOpenAiApi(input);
+        return ResponseEntity.ok(supportPrograms);
     }
 }

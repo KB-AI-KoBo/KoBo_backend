@@ -1,41 +1,24 @@
 package com.kb.kobo.program.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-
-import javax.persistence.*;
-import java.sql.Timestamp;
-
+import lombok.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
-@Table(name="SupportPrograms")
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class SupportProgram {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "program_id")
-    private Long programId;
-
-    @Column(name = "program_name", nullable = false)
-    private String programName;
-
-//    @Column(name = "description", nullable = false)
-//    private String description;
-//
-//    @Column(name = "eligibility_criteria", nullable = false)
-//    private String eligibilityCriteria;
-//
-//    @Column(name = "application_deadline", nullable = false)
-//    @Temporal(TemporalType.DATE)
-//    private Date applicationDeadline;
-
-    @Column(name = "url", nullable = false)
-    private String url;
-
-    @CreationTimestamp
-    private Timestamp createdAt;
-
+    private Long id;
+    private String businessName;
+    private String field;
+    private String applicationStartDate;
+    private String applicationEndDate;
+    private String supervisingAgency;
+    private String implementingAgency;
+    private String detailURL;
 }

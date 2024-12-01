@@ -1,7 +1,7 @@
 package com.kb.kobo.AI.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kb.kobo.program.domain.Program;
+import com.kb.kobo.program.domain.SupportProgram;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -26,7 +26,7 @@ public class OpenAiService {
         this.objectMapper = objectMapper;
     }
 
-    public List<Program> callOpenAiApi(String input) {
+    public List<SupportProgram> callOpenAiApi(String input) {
         String apiUrl = "https://api.odcloud.kr/api/3034791/v1/uddi:80a74cfd-55d2-4dd3-81c7-d01567d0b3c4?page=1&perPage=100&serviceKey=dq0FiphIXegKyP%2F5zIDul95IvtalzdhixfdY7Hp9g4Onm%2FX9aCt378S5nVejoKY%2BGFEL5uvq75P1%2FlYuu%2Bf%2BLQ%3D%3D";
 
         HttpHeaders headers = new HttpHeaders();
@@ -44,12 +44,12 @@ public class OpenAiService {
                 entity,
                 String.class);
 
-        // JSON 응답을 List<Program>으로 변환
+        // JSON 응답을 List<SupportProgram>으로 변환
         try {
-            // 응답을 파싱하여 List<Program>으로 변환
-            List<Program> programs = objectMapper.readValue(response.getBody(),
-                    objectMapper.getTypeFactory().constructCollectionType(List.class, Program.class));
-            return programs;
+            // 응답을 파싱하여 List<SupportProgram>으로 변환
+            List<SupportProgram> supportPrograms = objectMapper.readValue(response.getBody(),
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, SupportProgram.class));
+            return supportPrograms;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
