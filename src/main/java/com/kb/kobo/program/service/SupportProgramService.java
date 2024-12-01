@@ -1,10 +1,9 @@
 package com.kb.kobo.program.service;
 
-import com.kb.kobo.program.dto.ProgramResponse;
-import com.kb.kobo.program.domain.Program;
+import com.kb.kobo.program.domain.SupportProgram;
+import com.kb.kobo.program.dto.ProgramResDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,36 +13,35 @@ public class SupportProgramService {
 
     private final String API_URL = "https://api.odcloud.kr/api/3034791/v1/uddi:80a74cfd-55d2-4dd3-81c7-d01567d0b3c4?serviceKey=dq0FiphIXegKyP%2F5zIDul95IvtalzdhixfdY7Hp9g4Onm%2FX9aCt378S5nVejoKY%2BGFEL5uvq75P1%2FlYuu%2Bf%2BLQ%3D%3D";
 
-    public List<Program> getFilteredPrograms(String 분야, String 소관기관, String 신청시작일자, String 신청종료일자){
+    public List<SupportProgram> getFilteredPrograms(String field, String supervisingAgency, String applicationStartDate, String applicationEndDate){
         RestTemplate restTemplate = new RestTemplate();
-        ProgramResponse response = restTemplate.getForObject(API_URL, ProgramResponse.class);
+        ProgramResDto response = restTemplate.getForObject(API_URL, ProgramResDto.class);
 
-        List<Program> programs = response.getData();
+        List<SupportProgram> supportPrograms = response.getData();
 
-        // 필터링 로직
-        if (분야 != null && !분야.isEmpty()) {
-            programs = programs.stream()
-                    .filter(program -> program.get분야().equals(분야))
+        if (field != null && !field.isEmpty()) {
+            supportPrograms = supportPrograms.stream()
+                    .filter(program -> program.getField().equals(field))
                     .collect(Collectors.toList());
         }
 
-        if (소관기관 != null && !소관기관.isEmpty()) {
-            programs = programs.stream()
-                    .filter(program -> program.get소관기관().equals(소관기관))
+        if (supervisingAgency != null && !supervisingAgency.isEmpty()) {
+            supportPrograms = supportPrograms.stream()
+                    .filter(program -> program.getSupervisingAgency().equals(supervisingAgency))
                     .collect(Collectors.toList());
         }
 
         LocalDate now = LocalDate.now();
-        if (신청시작일자 != null && 신청종료일자 != null) {
-            programs = programs.stream()
+        if (applicationStartDate != null && applicationEndDate != null) {
+            supportPrograms = supportPrograms.stream()
                     .filter(program -> {
-                        LocalDate startDate = LocalDate.parse(program.get신청시작일자());
-                        LocalDate endDate = LocalDate.parse(program.get신청종료일자());
-                        return (startDate.isBefore(now) || startDate.isEqual(now)) && (endDate.isAfter(now) || endDate.isEqual(now)); // 진행 중인 것
+                        LocalDate startDate = LocalDate.parse(program.getApplicationStartDate());
+                        LocalDate endDate = LocalDate.parse(program.getApplicationEndDate());
+                        return (startDate.isBefore(now) || startDate.isEqual(now)) && (endDate.isAfter(now) || endDate.isEqual(now));
                     })
                     .collect(Collectors.toList());
         }
 
-        return programs;
+        return supportPrograms;
     }
 }

@@ -1,6 +1,6 @@
 package com.kb.kobo.program.controller;
 
-import com.kb.kobo.program.domain.Program;
+import com.kb.kobo.program.domain.SupportProgram;
 import com.kb.kobo.program.service.SupportProgramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +21,13 @@ public class SupportProgramController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Program>> getPrograms(
-            @RequestParam(required = false) String 분야,
-            @RequestParam(required = false) String 소관기관,
-            @RequestParam(required = false) String 신청시작일자,
-            @RequestParam(required = false) String 신청종료일자) {
-        List<Program> programs = supportProgramService.getFilteredPrograms(분야, 소관기관, 신청시작일자, 신청종료일자);
-        return ResponseEntity.ok(programs);
+    public ResponseEntity<List<SupportProgram>> getPrograms(
+            @RequestParam(required = false) String field,
+            @RequestParam(required = false) String supervisingAgency,
+            @RequestParam(required = false) String applicationStartDate,
+            @RequestParam(required = false) String applicationEndDate) {
+        List<SupportProgram> supportPrograms = supportProgramService.getFilteredPrograms(field, supervisingAgency, applicationStartDate, applicationEndDate);
+        return ResponseEntity.ok(supportPrograms);
     }
 
 }
