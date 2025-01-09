@@ -30,8 +30,8 @@ export const Login = () => {
             if (response.ok) {
 
                 const data = await response.json();
-                if (data.token) {
-                    localStorage.setItem('jwtToken', data.token);
+                if (data.access_token) {
+                    localStorage.setItem('jwtToken', data.access_token);
                     navigate("/"); // 로그인 성공 후 메인 페이지로 리다이렉트
                 } else {
                     alert("로그인 실패: JWT 토큰이 반환되지 않았습니다.");
