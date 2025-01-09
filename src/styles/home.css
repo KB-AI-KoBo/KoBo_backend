@@ -1,0 +1,124 @@
+.home {
+    align-items: center;
+    align-content: center;
+    background-color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    /* 스크롤 가능하도록 설정 */
+    max-height: 100vh;
+    /* 화면 높이에 맞게 제한 */
+}
+
+.home::-webkit-scrollbar {
+    width: 8px;
+    /* 스크롤바 너비 */
+}
+
+.home::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    /* 스크롤바 색상 */
+    border-radius: 4px;
+}
+
+.home::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+    /* 스크롤바 호버 시 색상 */
+}
+
+.home::-webkit-scrollbar-track {
+    background-color: #f5f5f5;
+    /* 스크롤 트랙 색상 */
+}
+
+.home .header-instance {
+    width: 100%;
+}
+
+.home .main-content {
+    margin-right: 10%;
+    margin-left: 10%;
+    justify-content: center;
+    display: center;
+}
+
+.home .image {
+    width: 100%;
+    max-height: 400px;
+    margin-top: 70px;
+    margin-bottom: 6px;
+    align-items: center;
+}
+
+.home .view {
+    background-color: var(--white);
+    border-radius: 20px;
+    box-shadow: 0px 4px 28px 9px #0000001a;
+    max-width: 640px;
+    height: 60px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.home .text-wrapper-8 {
+    color: var(--black);
+    font-family: "Malgun Gothic-Bold", Helvetica;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.home .card-frame {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    width: 100%;
+    /* align-content: space-around; */
+    justify-content: space-evenly;
+}
+
+/* Card Styling */
+.card {
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 5px 4px 4px #00000040;
+    width: 240px;
+    height: 240px;
+    overflow: hidden;
+    position: relative;
+}
+
+.card .rectangle {
+    background-color: #d9d9d9;
+    height: 136px;
+    margin: 10px auto;
+    max-width: 90%;
+}
+
+.card .text-wrapper {
+    color: var(--maintitle, #000000);
+    font-family: "Noto Sans", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.card .description {
+    color: #bebebe;
+    font-family: "Noto Sans", sans-serif;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 5px;
+}
+
+.home .footer-instance {
+    width: 100%;
+}

@@ -1,37 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Header from './components/Header';
+import './styles/style.css';
+
 import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
-import './styles/style.css';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import PublicHome from './pages/PublicHome';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 function App() {
-    const [isCollapsed, setIsCollapsed] = useState(false);
-
-    const toggleSidebar = () => {
-        setIsCollapsed(!isCollapsed);
-    };
-
     return (
         <Router>
-            <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/*" element={
-                    <div className="app">
-                        <Header />
-                        <div className="content-wrapper-container">
-                            <div className={`content-wrapper ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
-                                <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
-                                <MainContent />
-                            </div>
-                        </div>
-                    </div>
-                } />
-            </Routes>
+            <div className="app">
+                {/* 항상 표시될 Header */}
+                <Header />
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+                    {/* 기본 경로("/")에 Home 컴포넌트 표시 */}
+                    <Route path="/" element={<PublicHome />} />
+                </Routes>
+
+            </div>
         </Router>
     );
 }
