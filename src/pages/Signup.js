@@ -27,7 +27,7 @@ const Signup = () => {
 
     const handleSignup = async () => {
         try {
-            const response = await fetch('http://localhost:5050/user/signup', {
+            const response = await fetch('http://localhost:5050/api/user/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
