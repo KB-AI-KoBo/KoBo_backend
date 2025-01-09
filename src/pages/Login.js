@@ -26,11 +26,20 @@ export const Login = () => {
                 body: JSON.stringify(userData),
             });
 
+            const response = await fetch('http://localhost:5050/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
             if (response.ok) {
+
                 const data = await response.json();
                 if (data.token) {
-                    localStorage.setItem("jwtToken", data.token);
-                    navigate("/");
+                    localStorage.setItem('jwtToken', data.token);
+                    navigate("/"); // 로그인 성공 후 메인 페이지로 리다이렉트
                 } else {
                     alert("로그인 실패: JWT 토큰이 반환되지 않았습니다.");
                 }
@@ -38,7 +47,7 @@ export const Login = () => {
                 alert("로그인 실패: " + response.statusText);
             }
         } catch (error) {
-            console.error("Error:", error);
+            console.error('Error:', error);
             alert("로그인 중 오류가 발생했습니다.");
         }
     };
